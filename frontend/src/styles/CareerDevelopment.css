@@ -1,0 +1,322 @@
+.career-container {
+  display: flex;
+  width: 100%;
+  min-height: calc(100vh - 64px);
+  background-color: var(--background-light);
+}
+.career-content {
+  flex: 1;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  animation: fadeIn 0.5s ease;
+}
+.career-title {
+  font-size: 1.75rem;
+  margin-bottom: 1.5rem;
+  color: var(--text-primary);
+}
+.career-path-section {
+  background-color: var(--background);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+.career-path-section h2 {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+.career-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+.career-option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  background-color: var(--background-light);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  position: relative;
+}
+.career-option:hover {
+  border-color: var(--primary);
+  background-color: var(--primary-light);
+  color: var(--primary);
+}
+.career-option.selected {
+  background-color: var(--primary-light);
+  border-color: var(--primary);
+  color: var(--primary);
+  padding-right: 2.25rem;
+}
+.check-icon {
+  position: absolute;
+  right: 0.75rem;
+  animation: fadeIn 0.3s ease;
+}
+.selected-career-info {
+  padding: 1rem;
+  border-radius: 6px;
+  background-color: var(--primary-light);
+  border-left: 4px solid var(--primary);
+}
+.selected-career-info h3 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--primary);
+  font-size: 1.125rem;
+  margin-bottom: 0.5rem;
+}
+.selected-career-info p {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+.modules-section,
+.workshops-section {
+  margin-top: 2rem;
+}
+.modules-section h2,
+.workshops-section h2 {
+  font-size: 1.25rem;
+  margin-bottom: 1.5rem;
+  color: var(--text-primary);
+}
+.modules-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+.module-item {
+  background-color: var(--background);
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  opacity: 0;
+  transform: translateY(20px);
+}
+.module-item.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.module-item:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-hover);
+}
+.module-header {
+  padding: 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+}
+.module-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background-color: var(--primary-light);
+  color: var(--primary);
+}
+.module-level {
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+}
+.module-level.beginner {
+  background-color: rgba(54, 179, 126, 0.1);
+  color: var(--success);
+}
+.module-level.intermediate {
+  background-color: rgba(0, 184, 217, 0.1);
+  color: var(--secondary);
+}
+.module-level.advanced {
+  background-color: rgba(255, 171, 0, 0.1);
+  color: var(--warning);
+}
+.module-body {
+  padding: 1.25rem;
+  flex: 1;
+}
+.module-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+.module-code {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+.module-button {
+  display: block;
+  text-align: center;
+  padding: 0.75rem;
+  background-color: var(--background-light);
+  color: var(--primary);
+  font-weight: 500;
+  transition: var(--transition);
+  border-top: 1px solid var(--border);
+}
+.module-button:hover {
+  background-color: var(--primary-light);
+}
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.filter-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+.filter-button {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  background-color: var(--background);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.filter-button:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+.filter-button.active {
+  background-color: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+.workshops-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+.workshop-item {
+  background-color: var(--background);
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  opacity: 0;
+  transform: translateY(20px);
+}
+.workshop-item.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.workshop-item:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-hover);
+}
+.workshop-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  border-radius: 8px 8px 0 0;
+}
+.workshop-item.workshop::before {
+  background-color: var(--primary);
+}
+.workshop-item.event::before {
+  background-color: var(--secondary);
+}
+.workshop-date {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+.workshop-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.workshop-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.detail {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+.skills-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+.skill-tag {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  background-color: var(--background-light);
+  color: var(--text-secondary);
+}
+.register-button {
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  border-radius: 4px;
+  background-color: var(--primary);
+  color: white;
+  font-weight: 500;
+  text-align: center;
+  cursor: pointer;
+  transition: var(--transition);
+  border: none;
+}
+.register-button:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-2px);
+}
+@media (max-width: 768px) {
+  .career-content {
+    padding: 1rem;
+  }
+  .career-selector {
+    flex-direction: column;
+  }
+  .modules-list,
+  .workshops-list {
+    grid-template-columns: 1fr;
+  }
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

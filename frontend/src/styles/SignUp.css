@@ -1,0 +1,121 @@
+.signup-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+  background: #f9fbfe;
+  height:fit-content;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.signup-form {
+  background-color: #fff;
+  max-width: 400px;
+  width: 100%;
+  padding: 30px 40px;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.signup-form h2 {
+  margin-bottom: 25px;
+  color: #304FFE;
+  font-weight: 700;
+  font-size: 28px;
+  text-align: center;
+}
+
+.signup-form label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #303030;
+  display: block;
+  margin-bottom: 6px;
+  margin-top: 15px;
+}
+
+.signup-form input {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1.5px solid #ccc;
+  border-radius: 6px;
+  font-size: 15px;
+  transition: border-color 0.3s ease;
+  outline: none;
+}
+
+.signup-form input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 5px rgba(48, 79, 254, 0.3);
+}
+
+.signup-form .error {
+  color: #d93025;
+  font-size: 13px;
+  margin-top: 5px;
+}
+
+.signup-form button {
+  width: 100%;
+  padding: 14px 0;
+  background-color: #2563eb;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: 700;
+  font-size: 17px;
+  margin-top: 25px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.signup-form button:hover {
+  background-color: #1a3bcc;
+}
+
+/* Fade-in for the whole form */
+.signup-form {
+  opacity: 0;
+  animation: fadeIn 1s ease forwards;
+  animation-delay: 0.3s;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+/* Slide-in from bottom */
+.signup-container {
+  transform: translateY(50px);
+  opacity: 0;
+  animation: slideInBottom 0.6s ease forwards;
+  animation-delay: 0.5s;
+}
+
+@keyframes slideInBottom {
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Button hover animation */
+.signup-button {
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.signup-button:hover {
+  background-color: #2a66f8;
+  transform: scale(1.05);
+  cursor: pointer;
+}
+
+/* Input focus glow */
+.signup-input:focus {
+  border-color: #4062f8;
+  box-shadow: 0 0 8px #4062f8;
+  outline: none;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
