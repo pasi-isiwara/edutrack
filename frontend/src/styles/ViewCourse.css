@@ -1,0 +1,310 @@
+.vc-view-course-container {
+  display: flex;
+  width: 100%;
+  min-height: calc(100vh - 64px);
+  background-color: var(--background-light);
+}
+.vc-view-course-content {
+  flex: 1;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  animation: fadeIn 0.5s ease;
+}
+.vc-loading-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  gap: 1rem;
+}
+.vc-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(51, 102, 255, 0.2);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.vc-view-course-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.vc-course-info {
+  flex: 1;
+}
+.vc-course-title {
+  font-size: 1.75rem;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+.vc-course-meta {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+.vc-course-code {
+  font-weight: 500;
+  color: var(--text-secondary);
+  background-color: var(--background);
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  border: 1px solid var(--border);
+}
+.vc-enrollment-key {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+.vc-update-course-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--primary);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  font-weight: 500;
+  font-size: 0.875rem;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+.vc-update-course-button:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-2px);
+}
+.vc-save-confirmation {
+  position: fixed;
+  top: 2rem;
+  right: 2rem;
+  background-color: var(--success);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-100px);
+  opacity: 0;
+  transition: transform 0.5s ease, opacity 0.5s ease;
+  z-index: 1000;
+}
+.vc-save-confirmation.show {
+  transform: translateY(0);
+  opacity: 1;
+}
+.vc-course-overview {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.vc-animate-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.vc-overview-card {
+  background-color: var(--background);
+  border-radius: 8px;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: var(--shadow);
+  position: relative;
+}
+.vc-overview-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+}
+.vc-overview-icon.students {
+  background-color: rgba(51, 102, 255, 0.1);
+  color: var(--primary);
+}
+.vc-overview-icon.topics {
+  background-color: rgba(0, 184, 217, 0.1);
+  color: var(--secondary);
+}
+.vc-overview-icon.assessments {
+  background-color: rgba(255, 171, 0, 0.1);
+  color: var(--warning);
+}
+.vc-overview-details {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.vc-overview-details h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+.vc-overview-details p {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+.vc-view-details-button {
+  background-color: var(--primary-light);
+  color: var(--primary);
+  border: none;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.vc-view-details-button:hover {
+  background-color: var(--primary);
+  color: white;
+}
+.vc-students-list {
+  background-color: var(--background);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  animation: slideDown 0.5s ease forwards;
+}
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.vc-section-title {
+  font-size: 1.25rem;
+  color: var(--text-primary);
+  margin-bottom: 1.5rem;
+}
+.vc-table-container {
+  overflow-x: auto;
+}
+.vc-students-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.vc-students-table th,
+.vc-students-table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+.vc-students-table th {
+  background-color: var(--background-light);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.vc-students-table tr:last-child td {
+  border-bottom: none;
+}
+.vc-students-table tr:hover td {
+  background-color: var(--background-light);
+}
+.vc-course-sections {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+.vc-topics-section,
+.vc-assessments-section {
+  background-color: var(--background);
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.vc-topics-list,
+.vc-assessments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.vc-topic-item {
+  background-color: var(--background-light);
+  border-radius: 8px;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.3s ease;
+}
+.vc-topic-item:hover {
+  background-color: rgba(51, 102, 255, 0.05);
+}
+.vc-topic-content {
+  flex: 1;
+}
+.vc-topic-name {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+.vc-topic-hours {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+.vc-completion-toggle {
+  display: flex;
+  align-items: center;
+}
+.vc-toggle-label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+.vc-toggle-label input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+.vc-toggle-text {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+.vc-toggle-text::before {
+  content: '';
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--border);
+  border-radius: 4px;
+  background-color: var(--background);
+  transition: all 0.3s ease;
+}
