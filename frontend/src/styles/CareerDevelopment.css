@@ -84,11 +84,13 @@
   font-size: 0.875rem;
 }
 .modules-section,
-.workshops-section {
+.workshops-section,
+.competitions-section {
   margin-top: 2rem;
 }
 .modules-section h2,
-.workshops-section h2 {
+.workshops-section h2,
+.competitions-section h2 {
   font-size: 1.25rem;
   margin-bottom: 1.5rem;
   color: var(--text-primary);
@@ -210,12 +212,14 @@
   color: white;
   border-color: var(--primary);
 }
-.workshops-list {
+.workshops-list,
+.competitions-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1.5rem;
 }
-.workshop-item {
+.workshop-item,
+.competition-item {
   background-color: var(--background);
   border-radius: 8px;
   padding: 1.5rem;
@@ -228,11 +232,13 @@
   opacity: 0;
   transform: translateY(20px);
 }
-.workshop-item.visible {
+.workshop-item.visible,
+.competition-item.visible {
   opacity: 1;
   transform: translateY(0);
 }
-.workshop-item:hover {
+.workshop-item:hover,
+.competition-item:hover {
   transform: translateY(-5px);
   box-shadow: var(--shadow-hover);
 }
@@ -251,17 +257,32 @@
 .workshop-item.event::before {
   background-color: var(--secondary);
 }
-.workshop-date {
+.competition-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  border-radius: 8px 8px 0 0;
+  background-color: var(--warning);
+}
+.workshop-date,
+.competition-date {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   color: var(--text-secondary);
   font-size: 0.875rem;
 }
-.workshop-title {
+.workshop-title,
+.competition-title {
   font-size: 1.125rem;
   font-weight: 600;
   color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 .workshop-details {
   display: flex;
@@ -304,6 +325,46 @@
   background-color: var(--primary-dark);
   transform: translateY(-2px);
 }
+.competition-deadline {
+  font-size: 0.75rem;
+  color: var(--warning);
+}
+.competition-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.competition-organizer {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+.competition-organizer span {
+  font-weight: 500;
+}
+.competition-description {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+.competition-prizes,
+.competition-eligibility {
+  margin-top: 0.5rem;
+}
+.competition-prizes h4,
+.competition-eligibility h4 {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+.competition-prizes p,
+.competition-eligibility p {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
 @media (max-width: 768px) {
   .career-content {
     padding: 1rem;
@@ -312,10 +373,15 @@
     flex-direction: column;
   }
   .modules-list,
-  .workshops-list {
+  .workshops-list,
+  .competitions-list {
     grid-template-columns: 1fr;
   }
   .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .competition-header {
     flex-direction: column;
     align-items: flex-start;
   }

@@ -2,7 +2,7 @@ import React from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Home from './pages/Home'
 import Login from './pages/Login'
-import SignUp from './pages/SignUp'
+import Signup from './pages/Signup'
 import StudentDashboard from './pages/StudentDashboard'
 import AllCourses from './pages/AllCourses'
 import CareerDevelopment from './pages/CareerDevelopment'
@@ -12,6 +12,7 @@ import TeacherDashboard from './pages/TeacherDashboard'
 import AddCourse from './pages/AddCourse'
 import ViewCourse from './pages/ViewCourse'
 import UpdateCourse from './pages/UpdateCourse'
+import TeacherCareerManagement from './pages/TeacherCareerManagement'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import './App.css'
@@ -60,7 +61,7 @@ import './App.css'
               <>
                 <Navbar />
                 <main className="main-content">
-                  <SignUp />
+                  <Signup />
                 </main>
                 <Footer />
               </>
@@ -83,10 +84,13 @@ import './App.css'
             path="/teacher/update-course/:courseId"
             element={<UpdateCourse />}
           />
+          <Route
+            path="/teacher/career-management"
+            element={<TeacherCareerManagement />}
+          />
         </Routes>
       </div>
     </Router>
   )
 }
-
 export default App

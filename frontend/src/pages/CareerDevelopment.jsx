@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   BriefcaseIcon, GraduationCapIcon, CalendarIcon, 
-  MapPinIcon, ClockIcon, UsersIcon, CheckIcon, FilterIcon
+  MapPinIcon, ClockIcon, UsersIcon, CheckIcon, FilterIcon, TrophyIcon
 } from 'lucide-react';
 import '../styles/CareerDevelopment.css';
 import SidebarNav from '../components/SidebarNav';
+
 const CareerDevelopment = () => {
   const [selectedCareer, setSelectedCareer] = useState('software-developer');
   const [filterType, setFilterType] = useState('all');
@@ -16,6 +17,7 @@ const CareerDevelopment = () => {
     { id: 'network-engineer', name: 'Network Engineer' },
     { id: 'ui-ux-designer', name: 'UI/UX Designer' }
   ];
+
   const careerModules = {
     'software-developer': [
       { id: 1, code: 'CS101', name: 'Introduction to Computer Science', level: 'Beginner' },
@@ -53,6 +55,7 @@ const CareerDevelopment = () => {
       { id: 25, code: 'DES401', name: 'Design Systems', level: 'Advanced' }
     ]
   };
+
   const workshops = [
     {
       id: 1,
@@ -111,9 +114,47 @@ const CareerDevelopment = () => {
       skills: ['Networking', 'Career Development', 'Professional Skills']
     }
   ];
+
+  const competitions = [
+    {
+      id: 1,
+      title: 'Annual Hackathon Challenge',
+      date: '2023-11-15',
+      registrationDeadline: '2023-11-01',
+      organizer: 'Tech Innovation Club',
+      description: 'A 48-hour hackathon to build innovative solutions for real-world problems',
+      prizes: '1st Place: $1000, 2nd Place: $500, 3rd Place: $250',
+      skills: ['Programming', 'Problem Solving', 'Teamwork'],
+      eligibility: 'All students'
+    },
+    {
+      id: 2,
+      title: 'Data Science Competition',
+      date: '2023-12-05',
+      registrationDeadline: '2023-11-20',
+      organizer: 'AI Research Center',
+      description: 'Solve complex data analysis challenges and present insights',
+      prizes: 'Winners will be offered internship opportunities at leading tech companies',
+      skills: ['Data Analysis', 'Machine Learning', 'Visualization'],
+      eligibility: 'Students with basic knowledge of statistics and programming'
+    },
+    {
+      id: 3,
+      title: 'Web Design Challenge',
+      date: '2024-01-25',
+      registrationDeadline: '2024-01-10',
+      organizer: 'Creative Design Department',
+      description: 'Design and implement a responsive website for a non-profit organization',
+      prizes: 'Best design will be implemented and featured in the university showcase',
+      skills: ['Web Design', 'HTML/CSS', 'UX Design'],
+      eligibility: 'Open to all students interested in web design'
+    }
+  ];
+
   const filteredWorkshops = filterType === 'all' 
     ? workshops 
     : workshops.filter(item => item.type === filterType);
+
   useEffect(() => {
     // Animation for modules
     const moduleItems = document.querySelectorAll('.module-item');
@@ -122,6 +163,7 @@ const CareerDevelopment = () => {
         item.classList.add('visible');
       }, 100 * index);
     });
+
     // Animation for workshops
     const workshopItems = document.querySelectorAll('.workshop-item');
     workshopItems.forEach((item, index) => {
@@ -129,7 +171,16 @@ const CareerDevelopment = () => {
         item.classList.add('visible');
       }, 150 * index);
     });
+
+    // Animation for competitions
+    const competitionItems = document.querySelectorAll('.competition-item');
+    competitionItems.forEach((item, index) => {
+      setTimeout(() => {
+        item.classList.add('visible');
+      }, 150 * index);
+    });
   }, [selectedCareer, filteredWorkshops]);
+
   return (
     <div className="career-container">
       <SidebarNav />
@@ -250,8 +301,63 @@ const CareerDevelopment = () => {
             ))}
           </div>
         </div>
+        <div className="competitions-section">
+          <div className="section-header">
+            <h2>Competitions</h2>
+          </div>
+          <div className="competitions-list">
+            {competitions.map(competition => (
+              <div key={competition.id} className="competition-item">
+                <div className="competition-header">
+                  <div className="competition-date">
+                    <CalendarIcon size={18} />
+                    <span>{new Date(competition.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+                  </div>
+                  <div className="competition-deadline">
+                    Registration Deadline: {new Date(competition.registrationDeadline).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                  </div>
+                </div>
+                <h3 className="competition-title">
+                  <TrophyIcon size={18} />
+                  {competition.title}
+                </h3>
+                {competition.organizer && (
+                  <div className="competition-organizer">
+                    <span>Organized by:</span> {competition.organizer}
+                  </div>
+                )}
+                {competition.description && (
+                  <div className="competition-description">
+                    {competition.description}
+                  </div>
+                )}
+                {competition.prizes && (
+                  <div className="competition-prizes">
+                    <h4>Prizes:</h4>
+                    <p>{competition.prizes}</p>
+                  </div>
+                )}
+                {competition.eligibility && (
+                  <div className="competition-eligibility">
+                    <h4>Eligibility:</h4>
+                    <p>{competition.eligibility}</p>
+                  </div>
+                )}
+                <div className="skills-tags">
+                  {competition.skills.map((skill, index) => (
+                    <span key={index} className="skill-tag">{skill}</span>
+                  ))}
+                </div>
+                <button className="register-button">
+                  Register Now
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );
 };
+
 export default CareerDevelopment;

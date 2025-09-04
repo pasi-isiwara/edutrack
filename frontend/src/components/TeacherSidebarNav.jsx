@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
   LayoutDashboardIcon, BookOpenIcon, UserIcon, 
-  SettingsIcon, LogOutIcon, MenuIcon, XIcon, PlusCircleIcon
+  SettingsIcon, LogOutIcon, MenuIcon, XIcon, PlusCircleIcon, TrendingUpIcon
 } from 'lucide-react';
 import '../styles/TeacherSidebarNav.css';
 const TeacherSidebarNav = () => {
@@ -26,6 +26,11 @@ const TeacherSidebarNav = () => {
       path: '/teacher/add-course', 
       icon: <PlusCircleIcon size={20} />, 
       label: 'Add New Course' 
+    },
+    { 
+      path: '/teacher/career-management', 
+      icon: <TrendingUpIcon size={20} />, 
+      label: 'Career Management' 
     },
     { 
       path: '/teacher/profile', 

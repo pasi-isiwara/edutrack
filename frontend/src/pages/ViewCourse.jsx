@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { 
   BookOpenIcon, UsersIcon, CheckCircleIcon, XCircleIcon, 
-  EditIcon, ClipboardListIcon, AlertCircleIcon, SaveIcon
+  EditIcon, ClipboardListIcon, AlertCircleIcon, SaveIcon,ClockIcon
 } from 'lucide-react';
 import '../styles/ViewCourse.css';
 import TeacherSidebarNav from '../components/TeacherSidebarNav';
@@ -243,9 +243,13 @@ const ViewCourse = () => {
                         checked={topic.completed}
                         onChange={(e) => handleTopicCompletion(topic.id, e.target.checked)}
                       />
-                      <span className="vc-toggle-text">
-                        {topic.completed ? 'Completed' : 'Mark as Completed'}
-                      </span>
+                        <span className="vc-icon">
+    {topic.completed ? (
+      <CheckCircleIcon size={20} color="#4CAF50" /> // green check
+    ) : (
+      <ClockIcon size={20} color="#FFC107" /> // pending mark (yellow clock)
+    )}
+  </span>
                     </label>
                   </div>
                 </div>
@@ -286,8 +290,12 @@ const ViewCourse = () => {
                         onChange={(e) => handleAssessmentCompletion(assessment.id, e.target.checked)}
                       />
                       <span className="vc-toggle-text">
-                        {assessment.completed ? 'Completed' : 'Mark as Completed'}
-                      </span>
+                        {assessment.completed ? (
+      <CheckCircleIcon size={20} color="#4CAF50" /> // green check
+    ) : (
+      <ClockIcon size={20} color="#FFC107" /> // pending mark (yellow clock)
+    )}
+  </span>
                     </label>
                   </div>
                 </div>
