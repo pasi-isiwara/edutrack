@@ -17,110 +17,166 @@ const ViewCourse = () => {
   const [course, setCourse] = useState(null);
 
   useEffect(() => {
-    setTimeout(() => {
-      const mockCourse = {
-        id: courseId,
-        code: 'CS101',
-        name: 'Introduction to Computer Science',
-        enrollmentKey: 'cs101key',
-        enrolledStudents: [
-          { id: 1, name: 'John Doe', regNumber: 'ST12345' },
-          { id: 2, name: 'Jane Smith', regNumber: 'ST12346' },
-          { id: 3, name: 'Bob Johnson', regNumber: 'ST12347' },
-          { id: 4, name: 'Alice Williams', regNumber: 'ST12348' },
-          { id: 5, name: 'Charlie Brown', regNumber: 'ST12349' }
-        ],
-        topics: [
-          { id: 1, name: 'Introduction to Programming', hours: 8, completed: true },
-          { id: 2, name: 'Data Types and Variables', hours: 6, completed: true },
-          { id: 3, name: 'Control Structures', hours: 7, completed: false },
-          { id: 4, name: 'Functions and Procedures', hours: 8, completed: false },
-          { id: 5, name: 'Arrays and Lists', hours: 6, completed: false },
-          { id: 6, name: 'Object-Oriented Programming', hours: 10, completed: false }
-        ],
-        assessments: [
-          { 
-            id: 1, 
-            name: 'Quiz 1', 
-            date: '2023-09-10', 
-            marks: 20,
-            contentCovered: 'Introduction to Programming, Data Types and Variables',
-            structure: 'Multiple choice questions and short answers',
-            completed: true
-          },
-          { 
-            id: 2, 
-            name: 'Assignment 1', 
-            date: '2023-09-20', 
-            marks: 30,
-            contentCovered: 'Control Structures, Functions and Procedures',
-            structure: 'Programming exercises and problem solving',
-            completed: false
-          },
-          { 
-            id: 3, 
-            name: 'Mid-term Exam', 
-            date: '2023-10-15', 
-            marks: 50,
-            contentCovered: 'All topics covered up to Functions and Procedures',
-            structure: 'Multiple choice, short answers, and programming problems',
-            completed: false
-          }
-        ],
-        eligibilityCriteria: 'Need more than 80% attendance and at least 40% for all continuous assessments combined.',
-        specialNotes: 'Students are encouraged to practice programming exercises regularly. Office hours are available on Tuesdays and Thursdays from 2-4 PM.'
-      };
-      setCourse(mockCourse);
-      setSpecialNotes(mockCourse.specialNotes);
-      setLoading(false);
-      setTimeout(() => {
-        const elements = document.querySelectorAll('.vc-animate-in');
-        elements.forEach((element, index) => {
-          setTimeout(() => {
-            element.classList.add('visible');
-          }, 100 * index);
-        });
-      }, 100);
-    }, 800);
+    const fetchCourseDetails = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(`http://localhost:5000/api/courses/${courseId}`);
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch course details');
+        }
+        
+        const data = await response.json();
+        
+        // Transform the data to match the expected format
+        const formattedCourse = {
+          id: data.id,
+          code: data.code,
+          name: data.name,
+          enrollmentKey: data.enrollmentKey,
+          enrolledStudents: data.enrolledStudents || [],
+          topics: data.topics.map(topic => ({
+            id: topic.id,
+            name: topic.name,
+            hours: topic.hours,
+            completed: topic.completed || false
+          })),
+          assessments: data.assessments.map(assessment => ({
+            id: assessment.id,
+            name: assessment.name,
+            date: assessment.date,
+            marks: assessment.marks,
+            contentCovered: assessment.content_covered || '',
+            structure: assessment.structure || '',
+            completed: assessment.completed || false
+          })),
+          eligibilityCriteria: data.eligibilityCriteria || '',
+          specialNotes: data.specialNotes || ''
+        };
+        
+        setCourse(formattedCourse);
+        setSpecialNotes(formattedCourse.specialNotes);
+        setLoading(false);
+        
+        // Animate elements
+        setTimeout(() => {
+          const elements = document.querySelectorAll('.vc-animate-in');
+          elements.forEach((element, index) => {
+            setTimeout(() => {
+              element.classList.add('visible');
+            }, 100 * index);
+          });
+        }, 100);
+        
+      } catch (error) {
+        console.error('Error fetching course details:', error);
+        setLoading(false);
+        alert('Failed to load course details. Please try again.');
+      }
+    };
+
+    fetchCourseDetails();
   }, [courseId]);
 
   const toggleStudentsList = () => {
     setShowStudents(!showStudents);
   };
 
-  const handleTopicCompletion = (topicId, completed) => {
-    setCourse({
-      ...course,
-      topics: course.topics.map(topic => 
-        topic.id === topicId ? { ...topic, completed } : topic
-      )
-    });
+  const handleTopicCompletion = async (topicId, completed) => {
+    try {
+      // Update in state first
+      setCourse({
+        ...course,
+        topics: course.topics.map(topic => 
+          topic.id === topicId ? { ...topic, completed } : topic
+        )
+      });
+
+      // Update in database
+      const response = await fetch(`http://localhost:5000/api/courses/topics/${topicId}/completion`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ completed })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update topic completion');
+      }
+
+    } catch (error) {
+      console.error('Error updating topic completion:', error);
+      alert('Failed to update topic completion. Please try again.');
+    }
   };
 
-  const handleAssessmentCompletion = (assessmentId, completed) => {
-    setCourse({
-      ...course,
-      assessments: course.assessments.map(assessment => 
-        assessment.id === assessmentId ? { ...assessment, completed } : assessment
-      )
-    });
+  const handleAssessmentCompletion = async (assessmentId, completed) => {
+    try {
+      // Update in state first
+      setCourse({
+        ...course,
+        assessments: course.assessments.map(assessment => 
+          assessment.id === assessmentId ? { ...assessment, completed } : assessment
+        )
+      });
+
+      // Update in database
+      const response = await fetch(`http://localhost:5000/api/courses/assessments/${assessmentId}/completion`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ completed })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update assessment completion');
+      }
+
+    } catch (error) {
+      console.error('Error updating assessment completion:', error);
+      alert('Failed to update assessment completion. Please try again.');
+    }
   };
 
   const handleNotesChange = (e) => {
     setSpecialNotes(e.target.value);
   };
 
-  const saveNotes = () => {
-    setCourse({
-      ...course,
-      specialNotes
-    });
-    setEditingNotes(false);
-    const saveConfirmation = document.querySelector('.vc-save-confirmation');
-    saveConfirmation.classList.add('show');
-    setTimeout(() => {
-      saveConfirmation.classList.remove('show');
-    }, 3000);
+  const saveNotes = async () => {
+    try {
+      // Update in database
+      const response = await fetch(`http://localhost:5000/api/courses/${courseId}/notes`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ specialNotes })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update notes');
+      }
+
+      // Update in state
+      setCourse({
+        ...course,
+        specialNotes
+      });
+      setEditingNotes(false);
+      
+      // Show success message
+      const saveConfirmation = document.querySelector('.vc-save-confirmation');
+      saveConfirmation.classList.add('show');
+      setTimeout(() => {
+        saveConfirmation.classList.remove('show');
+      }, 3000);
+
+    } catch (error) {
+      console.error('Error updating notes:', error);
+      alert('Failed to save notes. Please try again.');
+    }
   };
 
   if (loading) {
@@ -237,20 +293,23 @@ const ViewCourse = () => {
                     <span className="vc-topic-hours">{topic.hours} hours</span>
                   </div>
                   <div className="vc-completion-toggle">
-                    <label className="vc-toggle-label">
-                      <input 
-                        type="checkbox"
-                        checked={topic.completed}
-                        onChange={(e) => handleTopicCompletion(topic.id, e.target.checked)}
-                      />
-                        <span className="vc-icon">
-    {topic.completed ? (
-      <CheckCircleIcon size={20} color="#4CAF50" /> // green check
-    ) : (
-      <ClockIcon size={20} color="#FFC107" /> // pending mark (yellow clock)
-    )}
-  </span>
-                    </label>
+                    <button 
+                      className={`vc-completion-button ${topic.completed ? 'completed' : 'pending'}`}
+                      onClick={() => handleTopicCompletion(topic.id, !topic.completed)}
+                      title={topic.completed ? 'Mark as incomplete' : 'Mark as complete'}
+                    >
+                      {topic.completed ? (
+                        <>
+                          <CheckCircleIcon size={20} />
+                          <span>Completed</span>
+                        </>
+                      ) : (
+                        <>
+                          <ClockIcon size={20} />
+                          <span>Pending</span>
+                        </>
+                      )}
+                    </button>
                   </div>
                 </div>
               ))}
@@ -267,6 +326,7 @@ const ViewCourse = () => {
                       <span className="vc-assessment-date">
                         Date: {new Date(assessment.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
                       </span>
+                      <br />
                       <span className="vc-assessment-marks">
                         Marks: {assessment.marks}
                       </span>
@@ -274,29 +334,35 @@ const ViewCourse = () => {
                   </div>
                   <div className="vc-assessment-details">
                     <div className="vc-detail-item">
-                      <span className="vc-detail-label">Content Covered:</span>
-                      <p>{assessment.contentCovered}</p>
+                      <span className="vc-detail-label">Content Covered : </span>
+                      <span>{assessment.contentCovered}</span>
                     </div>
                     <div className="vc-detail-item">
-                      <span className="vc-detail-label">Structure:</span>
-                      <p>{assessment.structure}</p>
+                      <span className="vc-detail-label">Structure : </span>
+                      <span>{assessment.structure}</span>
+                      <br />
+                      <br />
+
                     </div>
                   </div>
                   <div className="vc-completion-toggle">
-                    <label className="vc-toggle-label">
-                      <input 
-                        type="checkbox"
-                        checked={assessment.completed}
-                        onChange={(e) => handleAssessmentCompletion(assessment.id, e.target.checked)}
-                      />
-                      <span className="vc-toggle-text">
-                        {assessment.completed ? (
-      <CheckCircleIcon size={20} color="#4CAF50" /> // green check
-    ) : (
-      <ClockIcon size={20} color="#FFC107" /> // pending mark (yellow clock)
-    )}
-  </span>
-                    </label>
+                    <button 
+                      className={`vc-completion-button ${assessment.completed ? 'completed' : 'pending'}`}
+                      onClick={() => handleAssessmentCompletion(assessment.id, !assessment.completed)}
+                      title={assessment.completed ? 'Mark as incomplete' : 'Mark as complete'}
+                    >
+                      {assessment.completed ? (
+                        <>
+                          <CheckCircleIcon size={20} />
+                          <span>Completed</span>
+                        </>
+                      ) : (
+                        <>
+                          <ClockIcon size={20} />
+                          <span>Pending</span>
+                        </>
+                      )}
+                    </button>
                   </div>
                 </div>
               ))}

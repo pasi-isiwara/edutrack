@@ -1,0 +1,20 @@
+# Node modules
+node_modules
+npm-debug.log
+
+# Environment files - use docker-compose environment variables instead
+.env
+.env.local
+.env.*.local
+
+# Logs
+logs
+*.log
+
+# Testing
+coverage
+.nyc_output
+
+# Docker
+Dockerfile
+.dockerignore

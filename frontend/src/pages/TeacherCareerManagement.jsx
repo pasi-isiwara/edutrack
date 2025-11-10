@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  BriefcaseIcon, GraduationCapIcon, CalendarIcon, 
+  BriefcaseIcon, CalendarIcon, 
   MapPinIcon, ClockIcon, UsersIcon, PlusIcon, 
   TrashIcon, EditIcon, SaveIcon, XIcon, TrophyIcon
 } from 'lucide-react';
@@ -9,24 +9,16 @@ import TeacherSidebarNav from '../components/TeacherSidebarNav';
 const TeacherCareerManagement = () => {
   const [activeTab, setActiveTab] = useState('careers');
   const [careers, setCareers] = useState([]);
-  const [modules, setModules] = useState([]);
+  const [allCourses, setAllCourses] = useState([]); // All available courses
   const [workshops, setWorkshops] = useState([]);
   const [competitions, setCompetitions] = useState([]);
   const [loading, setLoading] = useState(true);
   // Edit states
   const [editingCareer, setEditingCareer] = useState(null);
-  const [editingModule, setEditingModule] = useState(null);
   const [editingWorkshop, setEditingWorkshop] = useState(null);
   const [editingCompetition, setEditingCompetition] = useState(null);
   // New item states
-  const [newCareer, setNewCareer] = useState({ id: '', name: '' });
-  const [newModule, setNewModule] = useState({ 
-    id: null, 
-    code: '', 
-    name: '', 
-    level: 'Beginner',
-    careerPaths: [] 
-  });
+  const [newCareer, setNewCareer] = useState({ id: '', name: '', recommendedCourses: [] });
   const [newWorkshop, setNewWorkshop] = useState({ 
     id: null, 
     title: '', 
@@ -55,140 +47,54 @@ const TeacherCareerManagement = () => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   useEffect(() => {
-    // Simulate API call to fetch data
-    setTimeout(() => {
-      const mockCareers = [
-        { id: 'software-developer', name: 'Software Developer' },
-        { id: 'data-scientist', name: 'Data Scientist' },
-        { id: 'cybersecurity-specialist', name: 'Cybersecurity Specialist' },
-        { id: 'network-engineer', name: 'Network Engineer' },
-        { id: 'ui-ux-designer', name: 'UI/UX Designer' }
-      ];
-      const mockModules = [
-        { id: 1, code: 'CS101', name: 'Introduction to Computer Science', level: 'Beginner', careerPaths: ['software-developer', 'data-scientist', 'cybersecurity-specialist', 'network-engineer'] },
-        { id: 2, code: 'CS201', name: 'Data Structures and Algorithms', level: 'Intermediate', careerPaths: ['software-developer', 'data-scientist'] },
-        { id: 3, code: 'WD101', name: 'Web Development Fundamentals', level: 'Beginner', careerPaths: ['software-developer', 'ui-ux-designer'] },
-        { id: 4, code: 'DB101', name: 'Database Management Systems', level: 'Intermediate', careerPaths: ['software-developer', 'data-scientist'] },
-        { id: 5, code: 'SE301', name: 'Software Engineering Principles', level: 'Advanced', careerPaths: ['software-developer'] },
-        { id: 6, code: 'STAT201', name: 'Statistics for Data Science', level: 'Intermediate', careerPaths: ['data-scientist'] },
-        { id: 7, code: 'ML301', name: 'Machine Learning Fundamentals', level: 'Advanced', careerPaths: ['data-scientist'] },
-        { id: 8, code: 'SEC301', name: 'Information Security Fundamentals', level: 'Advanced', careerPaths: ['cybersecurity-specialist', 'network-engineer'] },
-        { id: 9, code: 'DES101', name: 'Design Principles', level: 'Beginner', careerPaths: ['ui-ux-designer'] }
-      ];
-      const mockWorkshops = [
-        {
-          id: 1,
-          title: 'Introduction to React.js',
-          type: 'workshop',
-          date: '2023-09-15',
-          time: '10:00 AM - 2:00 PM',
-          location: 'Tech Hub, Room 302',
-          instructor: 'Dr. Jane Smith',
-          capacity: 30,
-          registered: 18,
-          skills: ['Frontend Development', 'JavaScript', 'React']
-        },
-        {
-          id: 2,
-          title: 'Data Science Career Fair',
-          type: 'event',
-          date: '2023-09-20',
-          time: '9:00 AM - 4:00 PM',
-          location: 'University Main Hall',
-          companies: 15,
-          skills: ['Networking', 'Career Development', 'Data Science']
-        },
-        {
-          id: 3,
-          title: 'Cybersecurity Bootcamp',
-          type: 'workshop',
-          date: '2023-10-05',
-          time: '9:00 AM - 5:00 PM',
-          location: 'Security Lab, Building B',
-          instructor: 'Prof. Michael Chen',
-          capacity: 25,
-          registered: 25,
-          skills: ['Cybersecurity', 'Ethical Hacking', 'Network Security']
-        },
-        {
-          id: 4,
-          title: 'UI/UX Design Sprint',
-          type: 'workshop',
-          date: '2023-10-12',
-          time: '1:00 PM - 5:00 PM',
-          location: 'Design Studio, Room 105',
-          instructor: 'Sarah Johnson',
-          capacity: 20,
-          registered: 12,
-          skills: ['UI Design', 'UX Design', 'Prototyping']
-        },
-        {
-          id: 5,
-          title: 'Tech Industry Networking Night',
-          type: 'event',
-          date: '2023-10-18',
-          time: '6:00 PM - 9:00 PM',
-          location: 'Innovation Center',
-          companies: 25,
-          skills: ['Networking', 'Career Development', 'Professional Skills']
-        }
-      ];
-      const mockCompetitions = [
-        {
-          id: 1,
-          title: 'Annual Hackathon Challenge',
-          date: '2023-11-15',
-          registrationDeadline: '2023-11-01',
-          organizer: 'Tech Innovation Club',
-          description: 'A 48-hour hackathon to build innovative solutions for real-world problems',
-          prizes: '1st Place: $1000, 2nd Place: $500, 3rd Place: $250',
-          skills: ['Programming', 'Problem Solving', 'Teamwork'],
-          eligibility: 'All students'
-        },
-        {
-          id: 2,
-          title: 'Data Science Competition',
-          date: '2023-12-05',
-          registrationDeadline: '2023-11-20',
-          organizer: 'AI Research Center',
-          description: 'Solve complex data analysis challenges and present insights',
-          prizes: 'Winners will be offered internship opportunities at leading tech companies',
-          skills: ['Data Analysis', 'Machine Learning', 'Visualization'],
-          eligibility: 'Students with basic knowledge of statistics and programming'
-        },
-        {
-          id: 3,
-          title: 'Web Design Challenge',
-          date: '2024-01-25',
-          registrationDeadline: '2024-01-10',
-          organizer: 'Creative Design Department',
-          description: 'Design and implement a responsive website for a non-profit organization',
-          prizes: 'Best design will be implemented and featured in the university showcase',
-          skills: ['Web Design', 'HTML/CSS', 'UX Design'],
-          eligibility: 'Open to all students interested in web design'
-        }
-      ];
-      setCareers(mockCareers);
-      setModules(mockModules);
-      setWorkshops(mockWorkshops);
-      setCompetitions(mockCompetitions);
-      setLoading(false);
-      // Animation for elements
-      setTimeout(() => {
-        const elements = document.querySelectorAll('.animate-in');
-        elements.forEach((element, index) => {
-          setTimeout(() => {
-            element.classList.add('visible');
-          }, 100 * index);
-        });
-      }, 100);
-    }, 800);
+    // Fetch career paths from API
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        
+        // Fetch careers from API
+        const careersResponse = await fetch('http://localhost:5000/api/career/careers');
+        const careersData = await careersResponse.json();
+        setCareers(careersData);
+
+        // Fetch all available courses
+        const coursesResponse = await fetch('http://localhost:5000/api/career/courses');
+        const coursesData = await coursesResponse.json();
+        setAllCourses(coursesData);
+
+        // Fetch workshops and events from API
+        const workshopsResponse = await fetch('http://localhost:5000/api/career/workshops');
+        const workshopsData = await workshopsResponse.json();
+        setWorkshops(workshopsData);
+
+        // Fetch competitions from API
+        const competitionsResponse = await fetch('http://localhost:5000/api/career/competitions');
+        const competitionsData = await competitionsResponse.json();
+        setCompetitions(competitionsData);
+        
+        setLoading(false);
+        
+        // Animation for elements
+        setTimeout(() => {
+          const elements = document.querySelectorAll('.animate-in');
+          elements.forEach((element, index) => {
+            setTimeout(() => {
+              element.classList.add('visible');
+            }, 100 * index);
+          });
+        }, 100);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, []);
   const handleTabChange = (tab) => {
     setActiveTab(tab);
     // Reset all editing states when changing tabs
     setEditingCareer(null);
-    setEditingModule(null);
     setEditingWorkshop(null);
     setEditingCompetition(null);
     // Animation for elements in the new tab
@@ -202,189 +108,228 @@ const TeacherCareerManagement = () => {
     }, 50);
   };
   // Career path management functions
-  const handleAddCareer = () => {
+  const handleAddCareer = async () => {
     if (!newCareer.id || !newCareer.name) return;
-    const careerIdExists = careers.some(career => career.id === newCareer.id);
-    if (careerIdExists) {
-      alert('A career with this ID already exists. Please use a different ID.');
-      return;
-    }
-    const updatedCareers = [...careers, newCareer];
-    setCareers(updatedCareers);
-    setNewCareer({ id: '', name: '' });
-    showSuccessMessage('Career path added successfully');
-  };
-  const handleUpdateCareer = () => {
-    if (!editingCareer || !editingCareer.id || !editingCareer.name) return;
-    const updatedCareers = careers.map(career => 
-      career.id === editingCareer.originalId ? { ...editingCareer, id: editingCareer.id } : career
-    );
-    // Update career paths in modules if career id changed
-    if (editingCareer.originalId !== editingCareer.id) {
-      const updatedModules = modules.map(module => {
-        if (module.careerPaths.includes(editingCareer.originalId)) {
-          const updatedPaths = module.careerPaths.map(path => 
-            path === editingCareer.originalId ? editingCareer.id : path
-          );
-          return { ...module, careerPaths: updatedPaths };
-        }
-        return module;
+    
+    try {
+      const response = await fetch('http://localhost:5000/api/career/careers', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newCareer)
       });
-      setModules(updatedModules);
+
+      if (response.ok) {
+        await response.json();
+        // Fetch updated careers list to get the complete data with recommended courses
+        const careersResponse = await fetch('http://localhost:5000/api/career/careers');
+        const careersData = await careersResponse.json();
+        setCareers(careersData);
+        setNewCareer({ id: '', name: '', recommendedCourses: [] });
+        showSuccessMessage('Career path added successfully');
+      } else {
+        const error = await response.json();
+        alert(error.message || 'Failed to add career path');
+      }
+    } catch (error) {
+      console.error('Error adding career:', error);
+      alert('Failed to add career path. Please try again.');
     }
-    setCareers(updatedCareers);
-    setEditingCareer(null);
-    showSuccessMessage('Career path updated successfully');
   };
-  const handleDeleteCareer = (careerId) => {
-    if (!window.confirm('Are you sure you want to delete this career path? This will also remove it from all associated modules.')) return;
-    const updatedCareers = careers.filter(career => career.id !== careerId);
-    // Remove this career path from all modules
-    const updatedModules = modules.map(module => ({
-      ...module,
-      careerPaths: module.careerPaths.filter(path => path !== careerId)
-    }));
-    setCareers(updatedCareers);
-    setModules(updatedModules);
-    showSuccessMessage('Career path deleted successfully');
+  const handleUpdateCareer = async () => {
+    if (!editingCareer || !editingCareer.id || !editingCareer.name) return;
+    
+    try {
+      const response = await fetch(`http://localhost:5000/api/career/careers/${editingCareer.originalId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          id: editingCareer.id, 
+          name: editingCareer.name, 
+          recommendedCourses: editingCareer.recommendedCourses || [] 
+        })
+      });
+
+      if (response.ok) {
+        await response.json();
+        // Fetch updated careers list
+        const careersResponse = await fetch('http://localhost:5000/api/career/careers');
+        const careersData = await careersResponse.json();
+        setCareers(careersData);
+        
+        setEditingCareer(null);
+        showSuccessMessage('Career path updated successfully');
+      } else {
+        const error = await response.json();
+        alert(error.message || 'Failed to update career path');
+      }
+    } catch (error) {
+      console.error('Error updating career:', error);
+      alert('Failed to update career path. Please try again.');
+    }
+  };
+  const handleDeleteCareer = async (careerId) => {
+    if (!window.confirm('Are you sure you want to delete this career path?')) return;
+    
+    try {
+      const response = await fetch(`http://localhost:5000/api/career/careers/${careerId}`, {
+        method: 'DELETE'
+      });
+
+      if (response.ok) {
+        const updatedCareers = careers.filter(career => career.id !== careerId);
+        setCareers(updatedCareers);
+        showSuccessMessage('Career path deleted successfully');
+      } else {
+        const error = await response.json();
+        alert(error.message || 'Failed to delete career path');
+      }
+    } catch (error) {
+      console.error('Error deleting career:', error);
+      alert('Failed to delete career path. Please try again.');
+    }
   };
   const startEditingCareer = (career) => {
     setEditingCareer({
       ...career,
+      recommendedCourses: career.recommendedCourses || [],
       originalId: career.id // Keep track of original ID for updating references
     });
   };
-  // Module management functions
-  const handleAddModule = () => {
-    if (!newModule.code || !newModule.name) return;
-    const moduleCodeExists = modules.some(module => module.code === newModule.code);
-    if (moduleCodeExists) {
-      alert('A module with this code already exists. Please use a different code.');
-      return;
-    }
-    const newId = modules.length > 0 ? Math.max(...modules.map(m => m.id)) + 1 : 1;
-    const updatedModules = [...modules, { ...newModule, id: newId }];
-    setModules(updatedModules);
-    setNewModule({ 
-      id: null, 
-      code: '', 
-      name: '', 
-      level: 'Beginner',
-      careerPaths: [] 
-    });
-    showSuccessMessage('Module added successfully');
-  };
-  const handleUpdateModule = () => {
-    if (!editingModule || !editingModule.code || !editingModule.name) return;
-    // Check if another module has this code (excluding the current one)
-    const codeExists = modules.some(module => 
-      module.id !== editingModule.id && module.code === editingModule.code
-    );
-    if (codeExists) {
-      alert('Another module with this code already exists. Please use a different code.');
-      return;
-    }
-    const updatedModules = modules.map(module => 
-      module.id === editingModule.id ? editingModule : module
-    );
-    setModules(updatedModules);
-    setEditingModule(null);
-    showSuccessMessage('Module updated successfully');
-  };
-  const handleDeleteModule = (moduleId) => {
-    if (!window.confirm('Are you sure you want to delete this module?')) return;
-    const updatedModules = modules.filter(module => module.id !== moduleId);
-    setModules(updatedModules);
-    showSuccessMessage('Module deleted successfully');
-  };
-  const startEditingModule = (module) => {
-    setEditingModule({ ...module });
-  };
-  const handleCareerPathToggle = (careerId, isForNewModule = false, moduleToUpdate = null) => {
-    if (isForNewModule) {
-      if (newModule.careerPaths.includes(careerId)) {
-        setNewModule({
-          ...newModule,
-          careerPaths: newModule.careerPaths.filter(id => id !== careerId)
-        });
-      } else {
-        setNewModule({
-          ...newModule,
-          careerPaths: [...newModule.careerPaths, careerId]
-        });
-      }
-    } else {
-      const module = moduleToUpdate || editingModule;
-      if (!module) return;
-      if (module.careerPaths.includes(careerId)) {
-        const updatedPaths = module.careerPaths.filter(id => id !== careerId);
-        setEditingModule({ ...module, careerPaths: updatedPaths });
-      } else {
-        setEditingModule({
-          ...module,
-          careerPaths: [...module.careerPaths, careerId]
-        });
-      }
-    }
-  };
+  
   // Workshop/Event management functions
-  const handleAddWorkshop = () => {
+  const handleAddWorkshop = async () => {
     if (!newWorkshop.title || !newWorkshop.date || !newWorkshop.time || !newWorkshop.location) return;
-    const newId = workshops.length > 0 ? Math.max(...workshops.map(w => w.id)) + 1 : 1;
-    // Clean up skills (remove empty ones)
-    const cleanedSkills = newWorkshop.skills.filter(skill => skill.trim() !== '');
-    if (cleanedSkills.length === 0) cleanedSkills.push('General');
-    const updatedWorkshops = [
-      ...workshops, 
-      { 
-        ...newWorkshop, 
-        id: newId,
-        skills: cleanedSkills,
-        registered: newWorkshop.type === 'workshop' ? parseInt(newWorkshop.registered || 0) : undefined,
-        capacity: newWorkshop.type === 'workshop' ? parseInt(newWorkshop.capacity || 0) : undefined,
-        companies: newWorkshop.type === 'event' ? parseInt(newWorkshop.companies || 0) : undefined
+    
+    try {
+      // Clean up skills (remove empty ones)
+      const cleanedSkills = newWorkshop.skills.filter(skill => skill.trim() !== '');
+      if (cleanedSkills.length === 0) cleanedSkills.push('General');
+
+      const workshopData = {
+        title: newWorkshop.title,
+        type: newWorkshop.type,
+        date: newWorkshop.date,
+        time: newWorkshop.time,
+        location: newWorkshop.location,
+        instructor: newWorkshop.instructor || null,
+        capacity: newWorkshop.type === 'workshop' ? parseInt(newWorkshop.capacity || 0) : null,
+        registered: newWorkshop.type === 'workshop' ? parseInt(newWorkshop.registered || 0) : null,
+        companies: newWorkshop.type === 'event' ? parseInt(newWorkshop.companies || 0) : null,
+        skills: cleanedSkills
+      };
+
+      const response = await fetch('http://localhost:5000/api/career/workshops', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(workshopData)
+      });
+
+      if (response.ok) {
+        // Fetch updated workshops list
+        const workshopsResponse = await fetch('http://localhost:5000/api/career/workshops');
+        const workshopsData = await workshopsResponse.json();
+        setWorkshops(workshopsData);
+        
+        setNewWorkshop({ 
+          id: null, 
+          title: '', 
+          type: 'workshop',
+          date: '', 
+          time: '', 
+          location: '', 
+          instructor: '', 
+          capacity: '', 
+          registered: '0',
+          skills: [''],
+          companies: ''
+        });
+        showSuccessMessage(`${newWorkshop.type === 'workshop' ? 'Workshop' : 'Event'} added successfully`);
+      } else {
+        const error = await response.json();
+        alert(error.message || 'Failed to add workshop/event');
       }
-    ];
-    setWorkshops(updatedWorkshops);
-    setNewWorkshop({ 
-      id: null, 
-      title: '', 
-      type: 'workshop',
-      date: '', 
-      time: '', 
-      location: '', 
-      instructor: '', 
-      capacity: '', 
-      registered: '0',
-      skills: [''],
-      companies: ''
-    });
-    showSuccessMessage(`${newWorkshop.type === 'workshop' ? 'Workshop' : 'Event'} added successfully`);
+    } catch (error) {
+      console.error('Error adding workshop:', error);
+      alert('Failed to add workshop/event. Please try again.');
+    }
   };
-  const handleUpdateWorkshop = () => {
+  const handleUpdateWorkshop = async () => {
     if (!editingWorkshop || !editingWorkshop.title || !editingWorkshop.date) return;
-    // Clean up skills (remove empty ones)
-    const cleanedSkills = editingWorkshop.skills.filter(skill => skill.trim() !== '');
-    if (cleanedSkills.length === 0) cleanedSkills.push('General');
-    const updatedWorkshops = workshops.map(workshop => 
-      workshop.id === editingWorkshop.id ? { 
-        ...editingWorkshop,
-        skills: cleanedSkills,
-        registered: editingWorkshop.type === 'workshop' ? parseInt(editingWorkshop.registered || 0) : undefined,
-        capacity: editingWorkshop.type === 'workshop' ? parseInt(editingWorkshop.capacity || 0) : undefined,
-        companies: editingWorkshop.type === 'event' ? parseInt(editingWorkshop.companies || 0) : undefined
-      } : workshop
-    );
-    setWorkshops(updatedWorkshops);
-    setEditingWorkshop(null);
-    showSuccessMessage(`${editingWorkshop.type === 'workshop' ? 'Workshop' : 'Event'} updated successfully`);
+    
+    try {
+      // Clean up skills (remove empty ones)
+      const cleanedSkills = editingWorkshop.skills.filter(skill => skill.trim() !== '');
+      if (cleanedSkills.length === 0) cleanedSkills.push('General');
+
+      const workshopData = {
+        title: editingWorkshop.title,
+        type: editingWorkshop.type,
+        date: editingWorkshop.date,
+        time: editingWorkshop.time,
+        location: editingWorkshop.location,
+        instructor: editingWorkshop.instructor || null,
+        capacity: editingWorkshop.type === 'workshop' ? parseInt(editingWorkshop.capacity || 0) : null,
+        registered: editingWorkshop.type === 'workshop' ? parseInt(editingWorkshop.registered || 0) : null,
+        companies: editingWorkshop.type === 'event' ? parseInt(editingWorkshop.companies || 0) : null,
+        skills: cleanedSkills
+      };
+
+      const response = await fetch(`http://localhost:5000/api/career/workshops/${editingWorkshop.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(workshopData)
+      });
+
+      if (response.ok) {
+        // Fetch updated workshops list
+        const workshopsResponse = await fetch('http://localhost:5000/api/career/workshops');
+        const workshopsData = await workshopsResponse.json();
+        setWorkshops(workshopsData);
+        
+        setEditingWorkshop(null);
+        showSuccessMessage(`${editingWorkshop.type === 'workshop' ? 'Workshop' : 'Event'} updated successfully`);
+      } else {
+        const error = await response.json();
+        alert(error.message || 'Failed to update workshop/event');
+      }
+    } catch (error) {
+      console.error('Error updating workshop:', error);
+      alert('Failed to update workshop/event. Please try again.');
+    }
   };
-  const handleDeleteWorkshop = (workshopId) => {
+  const handleDeleteWorkshop = async (workshopId) => {
     if (!window.confirm('Are you sure you want to delete this item?')) return;
-    const workshopToDelete = workshops.find(w => w.id === workshopId);
-    const updatedWorkshops = workshops.filter(workshop => workshop.id !== workshopId);
-    setWorkshops(updatedWorkshops);
-    showSuccessMessage(`${workshopToDelete.type === 'workshop' ? 'Workshop' : 'Event'} deleted successfully`);
+    
+    try {
+      const workshopToDelete = workshops.find(w => w.id === workshopId);
+      
+      const response = await fetch(`http://localhost:5000/api/career/workshops/${workshopId}`, {
+        method: 'DELETE'
+      });
+
+      if (response.ok) {
+        // Fetch updated workshops list
+        const workshopsResponse = await fetch('http://localhost:5000/api/career/workshops');
+        const workshopsData = await workshopsResponse.json();
+        setWorkshops(workshopsData);
+        
+        showSuccessMessage(`${workshopToDelete.type === 'workshop' ? 'Workshop' : 'Event'} deleted successfully`);
+      } else {
+        const error = await response.json();
+        alert(error.message || 'Failed to delete workshop/event');
+      }
+    } catch (error) {
+      console.error('Error deleting workshop:', error);
+      alert('Failed to delete workshop/event. Please try again.');
+    }
   };
   const startEditingWorkshop = (workshop) => {
     setEditingWorkshop({ ...workshop });
@@ -437,54 +382,127 @@ const TeacherCareerManagement = () => {
     }
   };
   // Competition management functions
-  const handleAddCompetition = () => {
+  const handleAddCompetition = async () => {
     if (!newCompetition.title || !newCompetition.date || !newCompetition.registrationDeadline) return;
-    const newId = competitions.length > 0 ? Math.max(...competitions.map(c => c.id)) + 1 : 1;
-    // Clean up skills (remove empty ones)
-    const cleanedSkills = newCompetition.skills.filter(skill => skill.trim() !== '');
-    if (cleanedSkills.length === 0) cleanedSkills.push('General');
-    const updatedCompetitions = [
-      ...competitions, 
-      { 
-        ...newCompetition, 
-        id: newId,
-        skills: cleanedSkills
+    
+    try {
+      // Clean up skills (remove empty ones)
+      const cleanedSkills = newCompetition.skills.filter(skill => skill.trim() !== '');
+      if (cleanedSkills.length === 0) cleanedSkills.push('General');
+
+      const competitionData = {
+        title: newCompetition.title,
+        date: newCompetition.date,
+        registrationDeadline: newCompetition.registrationDeadline,
+        organizer: newCompetition.organizer || null,
+        description: newCompetition.description || null,
+        prizes: newCompetition.prizes || null,
+        skills: cleanedSkills,
+        eligibility: newCompetition.eligibility || null
+      };
+
+      const response = await fetch('http://localhost:5000/api/career/competitions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(competitionData)
+      });
+
+      if (response.ok) {
+        // Fetch updated competitions list
+        const competitionsResponse = await fetch('http://localhost:5000/api/career/competitions');
+        const competitionsData = await competitionsResponse.json();
+        setCompetitions(competitionsData);
+        
+        setNewCompetition({
+          id: null,
+          title: '',
+          date: '',
+          registrationDeadline: '',
+          organizer: '',
+          description: '',
+          prizes: '',
+          skills: [''],
+          eligibility: ''
+        });
+        showSuccessMessage('Competition added successfully');
+      } else {
+        const error = await response.json();
+        alert(error.message || 'Failed to add competition');
       }
-    ];
-    setCompetitions(updatedCompetitions);
-    setNewCompetition({
-      id: null,
-      title: '',
-      date: '',
-      registrationDeadline: '',
-      organizer: '',
-      description: '',
-      prizes: '',
-      skills: [''],
-      eligibility: ''
-    });
-    showSuccessMessage('Competition added successfully');
+    } catch (error) {
+      console.error('Error adding competition:', error);
+      alert('Failed to add competition. Please try again.');
+    }
   };
-  const handleUpdateCompetition = () => {
+  const handleUpdateCompetition = async () => {
     if (!editingCompetition || !editingCompetition.title || !editingCompetition.date) return;
-    // Clean up skills (remove empty ones)
-    const cleanedSkills = editingCompetition.skills.filter(skill => skill.trim() !== '');
-    if (cleanedSkills.length === 0) cleanedSkills.push('General');
-    const updatedCompetitions = competitions.map(competition => 
-      competition.id === editingCompetition.id ? { 
-        ...editingCompetition,
-        skills: cleanedSkills
-      } : competition
-    );
-    setCompetitions(updatedCompetitions);
-    setEditingCompetition(null);
-    showSuccessMessage('Competition updated successfully');
+    
+    try {
+      // Clean up skills (remove empty ones)
+      const cleanedSkills = editingCompetition.skills.filter(skill => skill.trim() !== '');
+      if (cleanedSkills.length === 0) cleanedSkills.push('General');
+
+      const competitionData = {
+        title: editingCompetition.title,
+        date: editingCompetition.date,
+        registrationDeadline: editingCompetition.registrationDeadline,
+        organizer: editingCompetition.organizer || null,
+        description: editingCompetition.description || null,
+        prizes: editingCompetition.prizes || null,
+        skills: cleanedSkills,
+        eligibility: editingCompetition.eligibility || null
+      };
+
+      const response = await fetch(`http://localhost:5000/api/career/competitions/${editingCompetition.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(competitionData)
+      });
+
+      if (response.ok) {
+        // Fetch updated competitions list
+        const competitionsResponse = await fetch('http://localhost:5000/api/career/competitions');
+        const competitionsData = await competitionsResponse.json();
+        setCompetitions(competitionsData);
+        
+        setEditingCompetition(null);
+        showSuccessMessage('Competition updated successfully');
+      } else {
+        const error = await response.json();
+        alert(error.message || 'Failed to update competition');
+      }
+    } catch (error) {
+      console.error('Error updating competition:', error);
+      alert('Failed to update competition. Please try again.');
+    }
   };
-  const handleDeleteCompetition = (competitionId) => {
+  const handleDeleteCompetition = async (competitionId) => {
     if (!window.confirm('Are you sure you want to delete this competition?')) return;
-    const updatedCompetitions = competitions.filter(competition => competition.id !== competitionId);
-    setCompetitions(updatedCompetitions);
-    showSuccessMessage('Competition deleted successfully');
+    
+    try {
+      const response = await fetch(`http://localhost:5000/api/career/competitions/${competitionId}`, {
+        method: 'DELETE'
+      });
+
+      if (response.ok) {
+        // Fetch updated competitions list
+        const competitionsResponse = await fetch('http://localhost:5000/api/career/competitions');
+        const competitionsData = await competitionsResponse.json();
+        setCompetitions(competitionsData);
+        
+        showSuccessMessage('Competition deleted successfully');
+      } else {
+        const error = await response.json();
+        alert(error.message || 'Failed to delete competition');
+      }
+    } catch (error) {
+      console.error('Error deleting competition:', error);
+      alert('Failed to delete competition. Please try again.');
+    }
   };
   const startEditingCompetition = (competition) => {
     setEditingCompetition({ ...competition });
@@ -574,13 +592,6 @@ const TeacherCareerManagement = () => {
             <span>Career Paths</span>
           </button>
           <button 
-            className={`tab-button ${activeTab === 'modules' ? 'active' : ''}`}
-            onClick={() => handleTabChange('modules')}
-          >
-            <GraduationCapIcon size={18} />
-            <span>Module Recommendations</span>
-          </button>
-          <button 
             className={`tab-button ${activeTab === 'workshops' ? 'active' : ''}`}
             onClick={() => handleTabChange('workshops')}
           >
@@ -627,6 +638,28 @@ const TeacherCareerManagement = () => {
                   />
                 </div>
               </div>
+              <div className="form-group">
+                <label htmlFor="recommended-courses">Recommended Courses (Optional)</label>
+                <select 
+                  id="recommended-courses" 
+                  multiple 
+                  value={newCareer.recommendedCourses}
+                  onChange={(e) => {
+                    const selected = Array.from(e.target.selectedOptions, option => parseInt(option.value));
+                    setNewCareer({ ...newCareer, recommendedCourses: selected });
+                  }}
+                  style={{ height: '150px' }}
+                >
+                  {allCourses.map(course => (
+                    <option key={course.id} value={course.id}>
+                      {course.code} - {course.name}
+                    </option>
+                  ))}
+                </select>
+                <small style={{ color: '#666', marginTop: '5px', display: 'block' }}>
+                  Hold Ctrl (Windows) or Cmd (Mac) to select multiple courses
+                </small>
+              </div>
               <button 
                 className="add-button"
                 onClick={handleAddCareer}
@@ -654,7 +687,7 @@ const TeacherCareerManagement = () => {
                           <h4 className="career-name">{career.name}</h4>
                           <p className="career-id">ID: {career.id}</p>
                           <p className="career-modules">
-                            {modules.filter(m => m.careerPaths.includes(career.id)).length} associated modules
+                            {career.recommendedCourses?.length || 0} recommended courses
                           </p>
                         </div>
                       </div>
@@ -710,6 +743,28 @@ const TeacherCareerManagement = () => {
                         onChange={(e) => setEditingCareer({ ...editingCareer, name: e.target.value })}
                       />
                     </div>
+                    <div className="form-group">
+                      <label htmlFor="edit-recommended-courses">Recommended Courses (Optional)</label>
+                      <select 
+                        id="edit-recommended-courses" 
+                        multiple 
+                        value={editingCareer.recommendedCourses || []}
+                        onChange={(e) => {
+                          const selected = Array.from(e.target.selectedOptions, option => parseInt(option.value));
+                          setEditingCareer({ ...editingCareer, recommendedCourses: selected });
+                        }}
+                        style={{ height: '150px' }}
+                      >
+                        {allCourses.map(course => (
+                          <option key={course.id} value={course.id}>
+                            {course.code} - {course.name}
+                          </option>
+                        ))}
+                      </select>
+                      <small style={{ color: '#666', marginTop: '5px', display: 'block' }}>
+                        Hold Ctrl (Windows) or Cmd (Mac) to select multiple courses
+                      </small>
+                    </div>
                     <div className="form-actions">
                       <button 
                         className="cancel-button"
@@ -721,223 +776,6 @@ const TeacherCareerManagement = () => {
                         className="save-button"
                         onClick={handleUpdateCareer}
                         disabled={!editingCareer.id || !editingCareer.name}
-                      >
-                        <SaveIcon size={16} />
-                        <span>Save Changes</span>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-        {activeTab === 'modules' && (
-          <div className="modules-management-section">
-            <div className="section-header">
-              <h2 className="section-title">Module Recommendations</h2>
-              <p className="section-description">
-                Manage modules and assign them to relevant career paths.
-              </p>
-            </div>
-            <div className="add-module-form">
-              <h3 className="form-title">Add New Module</h3>
-              <div className="form-grid">
-                <div className="form-group">
-                  <label htmlFor="module-code">Module Code</label>
-                  <input 
-                    type="text" 
-                    id="module-code" 
-                    value={newModule.code}
-                    onChange={(e) => setNewModule({ ...newModule, code: e.target.value })}
-                    placeholder="e.g., CS101"
-                  />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="module-name">Module Name</label>
-                  <input 
-                    type="text" 
-                    id="module-name" 
-                    value={newModule.name}
-                    onChange={(e) => setNewModule({ ...newModule, name: e.target.value })}
-                    placeholder="e.g., Introduction to Computer Science"
-                  />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="module-level">Level</label>
-                  <select 
-                    id="module-level" 
-                    value={newModule.level}
-                    onChange={(e) => setNewModule({ ...newModule, level: e.target.value })}
-                  >
-                    <option value="Beginner">Beginner</option>
-                    <option value="Intermediate">Intermediate</option>
-                    <option value="Advanced">Advanced</option>
-                  </select>
-                </div>
-              </div>
-              <div className="form-group">
-                <label>Associated Career Paths</label>
-                <div className="career-paths-selection">
-                  {careers.map(career => (
-                    <label key={career.id} className="career-path-checkbox">
-                      <input 
-                        type="checkbox"
-                        checked={newModule.careerPaths.includes(career.id)}
-                        onChange={() => handleCareerPathToggle(career.id, true)}
-                      />
-                      <span>{career.name}</span>
-                    </label>
-                  ))}
-                </div>
-                {careers.length === 0 && (
-                  <p className="form-note">
-                    No career paths available. Please add career paths first.
-                  </p>
-                )}
-              </div>
-              <button 
-                className="add-button"
-                onClick={handleAddModule}
-                disabled={!newModule.code || !newModule.name}
-              >
-                <PlusIcon size={16} />
-                <span>Add Module</span>
-              </button>
-            </div>
-            <div className="modules-list animate-in">
-              <h3 className="list-title">Existing Modules</h3>
-              {modules.length === 0 ? (
-                <div className="empty-state">
-                  <p>No modules added yet. Add your first module above.</p>
-                </div>
-              ) : (
-                <div className="modules-grid">
-                  {modules.map(module => (
-                    <div key={module.id} className="module-card">
-                      <div className="module-header">
-                        <div className="module-icon">
-                          <GraduationCapIcon size={20} />
-                        </div>
-                        <span className={`module-level ${module.level.toLowerCase()}`}>
-                          {module.level}
-                        </span>
-                      </div>
-                      <div className="module-body">
-                        <h4 className="module-name">{module.name}</h4>
-                        <p className="module-code">{module.code}</p>
-                        <div className="module-careers">
-                          <h5>Associated Career Paths:</h5>
-                          {module.careerPaths.length > 0 ? (
-                            <div className="career-paths-tags">
-                              {module.careerPaths.map(pathId => {
-                                const career = careers.find(c => c.id === pathId);
-                                return career ? (
-                                  <span key={pathId} className="career-path-tag">
-                                    {career.name}
-                                  </span>
-                                ) : null;
-                              })}
-                            </div>
-                          ) : (
-                            <p className="no-careers">No career paths associated</p>
-                          )}
-                        </div>
-                      </div>
-                      <div className="module-actions">
-                        <button 
-                          className="edit-button"
-                          onClick={() => startEditingModule(module)}
-                        >
-                          <EditIcon size={16} />
-                          <span>Edit</span>
-                        </button>
-                        <button 
-                          className="delete-button"
-                          onClick={() => handleDeleteModule(module.id)}
-                        >
-                          <TrashIcon size={16} />
-                          <span>Delete</span>
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-            {editingModule && (
-              <div className="edit-overlay">
-                <div className="edit-panel">
-                  <div className="edit-panel-header">
-                    <h3>Edit Module</h3>
-                    <button className="close-button" onClick={() => setEditingModule(null)}>
-                      <XIcon size={20} />
-                    </button>
-                  </div>
-                  <div className="edit-panel-content">
-                    <div className="form-grid">
-                      <div className="form-group">
-                        <label htmlFor="edit-module-code">Module Code</label>
-                        <input 
-                          type="text" 
-                          id="edit-module-code" 
-                          value={editingModule.code}
-                          onChange={(e) => setEditingModule({ ...editingModule, code: e.target.value })}
-                        />
-                      </div>
-                      <div className="form-group">
-                        <label htmlFor="edit-module-name">Module Name</label>
-                        <input 
-                          type="text" 
-                          id="edit-module-name" 
-                          value={editingModule.name}
-                          onChange={(e) => setEditingModule({ ...editingModule, name: e.target.value })}
-                        />
-                      </div>
-                      <div className="form-group">
-                        <label htmlFor="edit-module-level">Level</label>
-                        <select 
-                          id="edit-module-level" 
-                          value={editingModule.level}
-                          onChange={(e) => setEditingModule({ ...editingModule, level: e.target.value })}
-                        >
-                          <option value="Beginner">Beginner</option>
-                          <option value="Intermediate">Intermediate</option>
-                          <option value="Advanced">Advanced</option>
-                        </select>
-                      </div>
-                    </div>
-                    <div className="form-group">
-                      <label>Associated Career Paths</label>
-                      <div className="career-paths-selection">
-                        {careers.map(career => (
-                          <label key={career.id} className="career-path-checkbox">
-                            <input 
-                              type="checkbox"
-                              checked={editingModule.careerPaths.includes(career.id)}
-                              onChange={() => handleCareerPathToggle(career.id)}
-                            />
-                            <span>{career.name}</span>
-                          </label>
-                        ))}
-                      </div>
-                      {careers.length === 0 && (
-                        <p className="form-note">
-                          No career paths available. Please add career paths first.
-                        </p>
-                      )}
-                    </div>
-                    <div className="form-actions">
-                      <button 
-                        className="cancel-button"
-                        onClick={() => setEditingModule(null)}
-                      >
-                        Cancel
-                      </button>
-                      <button 
-                        className="save-button"
-                        onClick={handleUpdateModule}
-                        disabled={!editingModule.code || !editingModule.name}
                       >
                         <SaveIcon size={16} />
                         <span>Save Changes</span>

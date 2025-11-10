@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { BookIcon, BarChart2Icon, CheckCircleIcon, PlusIcon } from 'lucide-react';
 import '../styles/StudentDashboard.css';
 import SidebarNav from '../components/SidebarNav';
+
 const StudentDashboard = () => {
   const [enrollmentData, setEnrollmentData] = useState({
     moduleCode: '',
@@ -36,6 +37,7 @@ const StudentDashboard = () => {
       eligible: false
     }
   ]);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setEnrollmentData({
@@ -43,35 +45,34 @@ const StudentDashboard = () => {
       [name]: value
     });
   };
+
   const handleEnroll = (e) => {
     e.preventDefault();
-    // Enrollment logic would go here
     console.log('Enrolling with data:', enrollmentData);
-    // Reset form
     setEnrollmentData({
       moduleCode: '',
       enrollmentKey: ''
     });
-    // Show success message or feedback
   };
+
   useEffect(() => {
-    // Animation for cards
-    const cards = document.querySelectorAll('.course-card');
+    const cards = document.querySelectorAll('.sd-course-card');
     cards.forEach((card, index) => {
       setTimeout(() => {
-        card.classList.add('visible');
+        card.classList.add('sd-visible');
       }, 100 * index);
     });
   }, []);
+
   return (
-    <div className="dashboard-container">
+    <div className="sd-dashboard-container">
       <SidebarNav />
-      <div className="dashboard-content">
-        <h1 className="dashboard-title">Student Dashboard</h1>
-        <div className="enrollment-section">
+      <div className="sd-dashboard-content">
+        <h1 className="sd-dashboard-title">Student Dashboard</h1>
+        <div className="sd-enrollment-section">
           <h2>Enroll to New Module</h2>
-          <form className="enrollment-form" onSubmit={handleEnroll}>
-            <div className="form-group">
+          <form className="sd-enrollment-form" onSubmit={handleEnroll}>
+            <div className="sd-form-group">
               <label htmlFor="moduleCode">Module Code:</label>
               <input 
                 type="text" 
@@ -82,7 +83,7 @@ const StudentDashboard = () => {
                 required
               />
             </div>
-            <div className="form-group">
+            <div className="sd-form-group">
               <label htmlFor="enrollmentKey">Enrollment key:</label>
               <input 
                 type="text" 
@@ -93,41 +94,44 @@ const StudentDashboard = () => {
                 required
               />
             </div>
-            <button type="submit" className="enroll-button">Enroll</button>
+            <button type="submit" className="sd-enroll-button">Enroll</button>
           </form>
         </div>
-        <div className="modules-section">
-          <div className="section-header">
+
+        <div className="sd-modules-section">
+          <div className="sd-section-header">
             <h2>My Modules</h2>
-            <Link to="/courses" className="view-all-link">View All</Link>
+            <Link to="/courses" className="sd-view-all-link">View All</Link>
           </div>
-          <div className="courses-grid">
+          <div className="sd-courses-grid">
             {courses.map((course) => (
-              <div key={course.id} className="course-card">
-                <div className="course-icon">
+              <div key={course.id} className="sd-course-card">
+                <div className="sd-course-icon">
                   <BookIcon />
                 </div>
-                <div className="course-details">
-                  <Link to={`/course/${course.code}`} className="course-title">
+                <div className="sd-course-details">
+                  <Link to={`/course/${course.code}`} className="sd-course-title">
                     {course.title}
                   </Link>
-                  <p className="course-code">{course.code}</p>
-                  <div className="hours-section">
+                  <p className="sd-course-code">{course.code}</p>
+
+                  <div className="sd-hours-section">
                     <span>Hours</span>
-                    <div className="progress-container">
+                    <div className="sd-progress-container">
                       <div 
-                        className="progress-bar" 
+                        className="sd-progress-bar" 
                         style={{ width: `${course.progress}%` }}
                       ></div>
                     </div>
-                    <span className="progress-text">{course.hoursCompleted}/{course.totalHours}</span>
+                    <span className="sd-progress-text">{course.hoursCompleted}/{course.totalHours}</span>
                   </div>
-                  <div className="assessments-section">
+
+                  <div className="sd-assessments-section">
                     <h4>Recent Assessments</h4>
                     {course.assessments.map((assessment) => (
-                      <div key={assessment.id} className="assessment-item">
+                      <div key={assessment.id} className="sd-assessment-item">
                         <span>{assessment.title}</span>
-                        <span className="assessment-score">
+                        <span className="sd-assessment-score">
                           {assessment.completed ? 
                             `${assessment.score}/${assessment.maxScore}` : 
                             'Pending'}
@@ -135,9 +139,10 @@ const StudentDashboard = () => {
                       </div>
                     ))}
                   </div>
-                  <div className="eligibility-section">
+
+                  <div className="sd-eligibility-section">
                     <span>Exam Eligibility</span>
-                    <span className={`eligibility-status ${course.eligible ? 'eligible' : 'not-eligible'}`}>
+                    <span className={`sd-eligibility-status ${course.eligible ? 'sd-eligible' : 'sd-not-eligible'}`}>
                       {course.eligible ? 
                         <><CheckCircleIcon size={16} /> Eligible</> : 
                         'Not Eligible'}
@@ -146,8 +151,9 @@ const StudentDashboard = () => {
                 </div>
               </div>
             ))}
-            <Link to="/courses" className="enroll-more-card">
-              <div className="enroll-more-content">
+
+            <Link to="/courses" className="sd-enroll-more-card">
+              <div className="sd-enroll-more-content">
                 <PlusIcon size={32} />
                 <p>Enroll in More Modules</p>
               </div>
@@ -158,4 +164,5 @@ const StudentDashboard = () => {
     </div>
   );
 };
+
 export default StudentDashboard;

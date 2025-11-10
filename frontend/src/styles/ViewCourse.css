@@ -81,6 +81,8 @@
 }
 .vc-update-course-button:hover {
   background-color: var(--primary-dark);
+    color: white;
+
   transform: translateY(-2px);
 }
 .vc-save-confirmation {
@@ -274,10 +276,58 @@
   font-size: 0.75rem;
   color: var(--text-secondary);
 }
+
 .vc-completion-toggle {
   display: flex;
   align-items: center;
 }
+
+.vc-completion-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+.vc-completion-button.pending {
+  background-color: #FFF3E0;
+  color: #F57C00;
+  border: 1px solid #FFB74D;
+}
+
+.vc-completion-button.pending:hover {
+  background-color: #FFE0B2;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(245, 124, 0, 0.2);
+}
+
+.vc-completion-button.completed {
+  background-color: #E8F5E9;
+  color: #2E7D32;
+  border: 1px solid #66BB6A;
+}
+
+.vc-completion-button.completed:hover {
+  background-color: #C8E6C9;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(46, 125, 50, 0.2);
+}
+
+.vc-completion-button span {
+  font-weight: 500;
+}
+
+.vc-completion-button svg {
+  flex-shrink: 0;
+}
+
 .vc-toggle-label {
   display: flex;
   align-items: center;
@@ -307,4 +357,123 @@
   border-radius: 4px;
   background-color: var(--background);
   transition: all 0.3s ease;
+}
+
+/* Additional Information Section */
+.vc-additional-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-top: 2rem;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.vc-eligibility-section,
+.vc-notes-section {
+  background-color: var(--background);
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+}
+
+.vc-eligibility-content,
+.vc-notes-content {
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.vc-eligibility-content p,
+.vc-notes-content p {
+  margin: 0;
+}
+
+.vc-notes-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.vc-edit-notes-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.vc-edit-notes-button:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+.vc-notes-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.vc-notes-editor textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  background-color: var(--background);
+  resize: vertical;
+}
+
+.vc-notes-editor textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.vc-notes-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.vc-cancel-button,
+.vc-save-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.vc-cancel-button {
+  background-color: var(--background-light);
+  color: var(--text-secondary);
+}
+
+.vc-cancel-button:hover {
+  background-color: #e0e0e0;
+}
+
+.vc-save-button {
+  background-color: var(--primary);
+  color: white;
+}
+
+.vc-save-button:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-1px);
 }

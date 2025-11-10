@@ -178,6 +178,7 @@
   padding: 0 1.5rem 1.5rem;
   display: flex;
   justify-content: space-between;
+  
   border-bottom: 1px solid var(--border);
 }
 .detail-item {

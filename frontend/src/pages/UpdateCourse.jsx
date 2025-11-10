@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
-  BookOpenIcon, PlusIcon, TrashIcon, AlertCircleIcon, SaveIcon, ArrowLeftIcon
+  BookOpenIcon, PlusIcon, TrashIcon, AlertCircleIcon, SaveIcon, ArrowLeftIcon, GripVerticalIcon
 } from 'lucide-react';
 import '../styles/UpdateCourse.css';
 import TeacherSidebarNav from '../components/TeacherSidebarNav';
@@ -10,64 +10,65 @@ const UpdateCourse = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [draggedTopicIndex, setDraggedTopicIndex] = useState(null);
+  const [draggedAssessmentIndex, setDraggedAssessmentIndex] = useState(null);
   const [courseData, setCourseData] = useState(null);
   useEffect(() => {
-    // Simulate API call to fetch course data
-    setTimeout(() => {
-      const mockCourse = {
-        id: courseId,
-        name: 'Introduction to Computer Science',
-        code: 'CS101',
-        enrollmentKey: 'cs101key',
-        topics: [
-          { id: 1, name: 'Introduction to Programming', hours: 8 },
-          { id: 2, name: 'Data Types and Variables', hours: 6 },
-          { id: 3, name: 'Control Structures', hours: 7 },
-          { id: 4, name: 'Functions and Procedures', hours: 8 },
-          { id: 5, name: 'Arrays and Lists', hours: 6 },
-          { id: 6, name: 'Object-Oriented Programming', hours: 10 }
-        ],
-        assessments: [
-          { 
-            id: 1, 
-            name: 'Quiz 1', 
-            date: '2023-09-10', 
-            marks: 20,
-            contentCovered: 'Introduction to Programming, Data Types and Variables',
-            structure: 'Multiple choice questions and short answers'
-          },
-          { 
-            id: 2, 
-            name: 'Assignment 1', 
-            date: '2023-09-20', 
-            marks: 30,
-            contentCovered: 'Control Structures, Functions and Procedures',
-            structure: 'Programming exercises and problem solving'
-          },
-          { 
-            id: 3, 
-            name: 'Mid-term Exam', 
-            date: '2023-10-15', 
-            marks: 50,
-            contentCovered: 'All topics covered up to Functions and Procedures',
-            structure: 'Multiple choice, short answers, and programming problems'
-          }
-        ],
-        eligibilityCriteria: 'Need more than 80% attendance and at least 40% for all continuous assessments combined.',
-        specialNotes: 'Students are encouraged to practice programming exercises regularly. Office hours are available on Tuesdays and Thursdays from 2-4 PM.'
-      };
-      setCourseData(mockCourse);
-      setLoading(false);
-      // Animation for form sections
-      setTimeout(() => {
-        const sections = document.querySelectorAll('.form-section');
-        sections.forEach((section, index) => {
-          setTimeout(() => {
-            section.classList.add('visible');
-          }, 100 * index);
-        });
-      }, 100);
-    }, 800);
+    const fetchCourseData = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(`http://localhost:5000/api/courses/${courseId}`);
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch course details');
+        }
+        
+        const data = await response.json();
+        
+        // Transform the data to match the expected format
+        const formattedCourse = {
+          id: data.id,
+          name: data.name,
+          code: data.code,
+          enrollmentKey: data.enrollmentKey,
+          topics: data.topics.map(topic => ({
+            id: topic.id,
+            name: topic.name,
+            hours: topic.hours
+          })),
+          assessments: data.assessments.map(assessment => ({
+            id: assessment.id,
+            name: assessment.name,
+            date: assessment.date,
+            marks: assessment.marks,
+            contentCovered: assessment.content_covered || '',
+            structure: assessment.structure || ''
+          })),
+          eligibilityCriteria: data.eligibilityCriteria || '',
+          specialNotes: data.specialNotes || ''
+        };
+        
+        setCourseData(formattedCourse);
+        setLoading(false);
+        
+        // Animation for form sections
+        setTimeout(() => {
+          const sections = document.querySelectorAll('.form-section');
+          sections.forEach((section, index) => {
+            setTimeout(() => {
+              section.classList.add('visible');
+            }, 100 * index);
+          });
+        }, 100);
+        
+      } catch (error) {
+        console.error('Error fetching course data:', error);
+        setLoading(false);
+        alert('Failed to load course details. Please try again.');
+      }
+    };
+
+    fetchCourseData();
   }, [courseId]);
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -149,6 +150,57 @@ const UpdateCourse = () => {
       assessments: courseData.assessments.filter(assessment => assessment.id !== id)
     });
   };
+
+  // Drag and drop handlers for topics
+  const handleTopicDragStart = (index) => {
+    setDraggedTopicIndex(index);
+  };
+
+  const handleTopicDragOver = (e, index) => {
+    e.preventDefault();
+    if (draggedTopicIndex === null || draggedTopicIndex === index) return;
+
+    const newTopics = [...courseData.topics];
+    const draggedTopic = newTopics[draggedTopicIndex];
+    newTopics.splice(draggedTopicIndex, 1);
+    newTopics.splice(index, 0, draggedTopic);
+
+    setCourseData({
+      ...courseData,
+      topics: newTopics
+    });
+    setDraggedTopicIndex(index);
+  };
+
+  const handleTopicDragEnd = () => {
+    setDraggedTopicIndex(null);
+  };
+
+  // Drag and drop handlers for assessments
+  const handleAssessmentDragStart = (index) => {
+    setDraggedAssessmentIndex(index);
+  };
+
+  const handleAssessmentDragOver = (e, index) => {
+    e.preventDefault();
+    if (draggedAssessmentIndex === null || draggedAssessmentIndex === index) return;
+
+    const newAssessments = [...courseData.assessments];
+    const draggedAssessment = newAssessments[draggedAssessmentIndex];
+    newAssessments.splice(draggedAssessmentIndex, 1);
+    newAssessments.splice(index, 0, draggedAssessment);
+
+    setCourseData({
+      ...courseData,
+      assessments: newAssessments
+    });
+    setDraggedAssessmentIndex(index);
+  };
+
+  const handleAssessmentDragEnd = () => {
+    setDraggedAssessmentIndex(null);
+  };
+
   const validateForm = () => {
     // Basic validation
     if (!courseData.name || !courseData.code || !courseData.enrollmentKey) {
@@ -164,7 +216,7 @@ const UpdateCourse = () => {
     if (!validAssessments) return false;
     return true;
   };
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setFormSubmitted(true);
     if (!validateForm()) {
@@ -175,14 +227,35 @@ const UpdateCourse = () => {
       }
       return;
     }
-    // Submit form logic would go here
-    console.log('Form submitted:', courseData);
-    // Show success message and redirect
-    const successMessage = document.querySelector('.success-message');
-    successMessage.style.display = 'flex';
-    setTimeout(() => {
-      navigate(`/teacher/view-course/${courseId}`);
-    }, 2000);
+
+    try {
+      // Send update request to backend
+      const response = await fetch(`http://localhost:5000/api/courses/update/${courseId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(courseData)
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update course');
+      }
+
+      const result = await response.json();
+      console.log('Course updated successfully:', result);
+
+      // Show success message and redirect
+      const successMessage = document.querySelector('.success-message');
+      successMessage.style.display = 'flex';
+      setTimeout(() => {
+        navigate(`/teacher/view-course/${courseId}`);
+      }, 2000);
+
+    } catch (error) {
+      console.error('Error updating course:', error);
+      alert('Failed to update course. Please try again.');
+    }
   };
   if (loading) {
     return (
@@ -295,19 +368,31 @@ const UpdateCourse = () => {
               </button>
             </div>
             <div className="topics-container">
-              {courseData.topics.map((topic) => (
+              {courseData.topics.map((topic, index) => (
                 <div 
                   key={topic.id} 
                   className="topic-item visible"
                   id={`topic-${topic.id}`}
+                  draggable
+                  onDragStart={() => handleTopicDragStart(index)}
+                  onDragOver={(e) => handleTopicDragOver(e, index)}
+                  onDragEnd={handleTopicDragEnd}
+                  style={{ cursor: 'move', position: 'relative' }}
                 >
                   <div className="topic-header">
-                    <h3>Topic {topic.id}</h3>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1 }}>
+                      <GripVerticalIcon size={20} style={{ color: '#666', cursor: 'grab' }} />
+                      <h3>Topic {index + 1}</h3>
+                    </div>
                     <button 
                       type="button"
                       className="remove-button"
-                      onClick={() => removeTopic(topic.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        removeTopic(topic.id);
+                      }}
                       disabled={courseData.topics.length === 1}
+                      style={{ position: 'absolute', top: '10px', right: '10px' }}
                     >
                       <TrashIcon size={16} />
                     </button>
@@ -367,19 +452,31 @@ const UpdateCourse = () => {
               </button>
             </div>
             <div className="assessments-container">
-              {courseData.assessments.map((assessment) => (
+              {courseData.assessments.map((assessment, index) => (
                 <div 
                   key={assessment.id} 
                   className="assessment-item visible"
                   id={`assessment-${assessment.id}`}
+                  draggable
+                  onDragStart={() => handleAssessmentDragStart(index)}
+                  onDragOver={(e) => handleAssessmentDragOver(e, index)}
+                  onDragEnd={handleAssessmentDragEnd}
+                  style={{ cursor: 'move', position: 'relative' }}
                 >
                   <div className="assessment-header">
-                    <h3>Assessment {assessment.id}</h3>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1 }}>
+                      <GripVerticalIcon size={20} style={{ color: '#666', cursor: 'grab' }} />
+                      <h3>Assessment {index + 1}</h3>
+                    </div>
                     <button 
                       type="button"
                       className="remove-button"
-                      onClick={() => removeAssessment(assessment.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        removeAssessment(assessment.id);
+                      }}
                       disabled={courseData.assessments.length === 1}
+                      style={{ position: 'absolute', top: '10px', right: '10px' }}
                     >
                       <TrashIcon size={16} />
                     </button>

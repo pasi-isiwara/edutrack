@@ -10,6 +10,9 @@ import SidebarNav from '../components/SidebarNav';
 const CareerDevelopment = () => {
   const [selectedCareer, setSelectedCareer] = useState('software-developer');
   const [filterType, setFilterType] = useState('all');
+  const [workshops, setWorkshops] = useState([]);
+  const [competitions, setCompetitions] = useState([]);
+  const [loading, setLoading] = useState(true);
   const careers = [
     { id: 'software-developer', name: 'Software Developer' },
     { id: 'data-scientist', name: 'Data Scientist' },
@@ -56,104 +59,35 @@ const CareerDevelopment = () => {
     ]
   };
 
-  const workshops = [
-    {
-      id: 1,
-      title: 'Introduction to React.js',
-      type: 'workshop',
-      date: '2023-09-15',
-      time: '10:00 AM - 2:00 PM',
-      location: 'Tech Hub, Room 302',
-      instructor: 'Dr. Jane Smith',
-      capacity: 30,
-      registered: 18,
-      skills: ['Frontend Development', 'JavaScript', 'React']
-    },
-    {
-      id: 2,
-      title: 'Data Science Career Fair',
-      type: 'event',
-      date: '2023-09-20',
-      time: '9:00 AM - 4:00 PM',
-      location: 'University Main Hall',
-      companies: 15,
-      skills: ['Networking', 'Career Development', 'Data Science']
-    },
-    {
-      id: 3,
-      title: 'Cybersecurity Bootcamp',
-      type: 'workshop',
-      date: '2023-10-05',
-      time: '9:00 AM - 5:00 PM',
-      location: 'Security Lab, Building B',
-      instructor: 'Prof. Michael Chen',
-      capacity: 25,
-      registered: 25,
-      skills: ['Cybersecurity', 'Ethical Hacking', 'Network Security']
-    },
-    {
-      id: 4,
-      title: 'UI/UX Design Sprint',
-      type: 'workshop',
-      date: '2023-10-12',
-      time: '1:00 PM - 5:00 PM',
-      location: 'Design Studio, Room 105',
-      instructor: 'Sarah Johnson',
-      capacity: 20,
-      registered: 12,
-      skills: ['UI Design', 'UX Design', 'Prototyping']
-    },
-    {
-      id: 5,
-      title: 'Tech Industry Networking Night',
-      type: 'event',
-      date: '2023-10-18',
-      time: '6:00 PM - 9:00 PM',
-      location: 'Innovation Center',
-      companies: 25,
-      skills: ['Networking', 'Career Development', 'Professional Skills']
-    }
-  ];
-
-  const competitions = [
-    {
-      id: 1,
-      title: 'Annual Hackathon Challenge',
-      date: '2023-11-15',
-      registrationDeadline: '2023-11-01',
-      organizer: 'Tech Innovation Club',
-      description: 'A 48-hour hackathon to build innovative solutions for real-world problems',
-      prizes: '1st Place: $1000, 2nd Place: $500, 3rd Place: $250',
-      skills: ['Programming', 'Problem Solving', 'Teamwork'],
-      eligibility: 'All students'
-    },
-    {
-      id: 2,
-      title: 'Data Science Competition',
-      date: '2023-12-05',
-      registrationDeadline: '2023-11-20',
-      organizer: 'AI Research Center',
-      description: 'Solve complex data analysis challenges and present insights',
-      prizes: 'Winners will be offered internship opportunities at leading tech companies',
-      skills: ['Data Analysis', 'Machine Learning', 'Visualization'],
-      eligibility: 'Students with basic knowledge of statistics and programming'
-    },
-    {
-      id: 3,
-      title: 'Web Design Challenge',
-      date: '2024-01-25',
-      registrationDeadline: '2024-01-10',
-      organizer: 'Creative Design Department',
-      description: 'Design and implement a responsive website for a non-profit organization',
-      prizes: 'Best design will be implemented and featured in the university showcase',
-      skills: ['Web Design', 'HTML/CSS', 'UX Design'],
-      eligibility: 'Open to all students interested in web design'
-    }
-  ];
-
   const filteredWorkshops = filterType === 'all' 
     ? workshops 
     : workshops.filter(item => item.type === filterType);
+
+  useEffect(() => {
+    // Fetch workshops and competitions from API
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        
+        // Fetch workshops and events
+        const workshopsResponse = await fetch('http://localhost:5000/api/career/workshops');
+        const workshopsData = await workshopsResponse.json();
+        setWorkshops(workshopsData);
+
+        // Fetch competitions
+        const competitionsResponse = await fetch('http://localhost:5000/api/career/competitions');
+        const competitionsData = await competitionsResponse.json();
+        setCompetitions(competitionsData);
+        
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   useEffect(() => {
     // Animation for modules
@@ -180,6 +114,20 @@ const CareerDevelopment = () => {
       }, 150 * index);
     });
   }, [selectedCareer, filteredWorkshops]);
+
+  if (loading) {
+    return (
+      <div className="career-container">
+        <SidebarNav />
+        <div className="career-content">
+          <div className="loading-spinner">
+            <div className="spinner"></div>
+            <p>Loading career development data...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="career-container">

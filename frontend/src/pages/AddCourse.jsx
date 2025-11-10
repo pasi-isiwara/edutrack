@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
-  BookOpenIcon, PlusIcon, TrashIcon, AlertCircleIcon, SaveIcon, ArrowLeftIcon
+  BookOpenIcon, PlusIcon, TrashIcon, AlertCircleIcon, SaveIcon, ArrowLeftIcon, GripVerticalIcon
 } from 'lucide-react';
 import '../styles/AddCourse.css';
 import TeacherSidebarNav from '../components/TeacherSidebarNav';
@@ -9,6 +9,8 @@ import TeacherSidebarNav from '../components/TeacherSidebarNav';
 const AddCourse = () => {
   const navigate = useNavigate();
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [draggedTopicIndex, setDraggedTopicIndex] = useState(null);
+  const [draggedAssessmentIndex, setDraggedAssessmentIndex] = useState(null);
   const [courseData, setCourseData] = useState({
     name: '',
     code: '',
@@ -110,6 +112,56 @@ const AddCourse = () => {
     });
   };
 
+  // Drag and drop handlers for topics
+  const handleTopicDragStart = (index) => {
+    setDraggedTopicIndex(index);
+  };
+
+  const handleTopicDragOver = (e, index) => {
+    e.preventDefault();
+    if (draggedTopicIndex === null || draggedTopicIndex === index) return;
+
+    const newTopics = [...courseData.topics];
+    const draggedTopic = newTopics[draggedTopicIndex];
+    newTopics.splice(draggedTopicIndex, 1);
+    newTopics.splice(index, 0, draggedTopic);
+
+    setCourseData({
+      ...courseData,
+      topics: newTopics
+    });
+    setDraggedTopicIndex(index);
+  };
+
+  const handleTopicDragEnd = () => {
+    setDraggedTopicIndex(null);
+  };
+
+  // Drag and drop handlers for assessments
+  const handleAssessmentDragStart = (index) => {
+    setDraggedAssessmentIndex(index);
+  };
+
+  const handleAssessmentDragOver = (e, index) => {
+    e.preventDefault();
+    if (draggedAssessmentIndex === null || draggedAssessmentIndex === index) return;
+
+    const newAssessments = [...courseData.assessments];
+    const draggedAssessment = newAssessments[draggedAssessmentIndex];
+    newAssessments.splice(draggedAssessmentIndex, 1);
+    newAssessments.splice(index, 0, draggedAssessment);
+
+    setCourseData({
+      ...courseData,
+      assessments: newAssessments
+    });
+    setDraggedAssessmentIndex(index);
+  };
+
+  const handleAssessmentDragEnd = () => {
+    setDraggedAssessmentIndex(null);
+  };
+
   const validateForm = () => {
     if (!courseData.name || !courseData.code || !courseData.enrollmentKey) {
       return false;
@@ -125,7 +177,7 @@ const AddCourse = () => {
     return true;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setFormSubmitted(true);
 
@@ -137,13 +189,34 @@ const AddCourse = () => {
       return;
     }
 
-    console.log('Form submitted:', courseData);
+    try {
+      // Send course data to backend
+      const response = await fetch('http://localhost:5000/api/courses/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(courseData)
+      });
 
-    const successMessage = document.querySelector('.ac-success-message');
-    successMessage.style.display = 'flex';
-    setTimeout(() => {
-      navigate('/teacher/dashboard');
-    }, 2000);
+      if (!response.ok) {
+        throw new Error('Failed to create course');
+      }
+
+      const result = await response.json();
+      console.log('Course created successfully:', result);
+
+      // Show success message
+      const successMessage = document.querySelector('.ac-success-message');
+      successMessage.style.display = 'flex';
+      setTimeout(() => {
+        navigate('/teacher/dashboard');
+      }, 2000);
+
+    } catch (error) {
+      console.error('Error creating course:', error);
+      alert('Failed to create course. Please try again.');
+    }
   };
 
   return (
@@ -251,19 +324,31 @@ const AddCourse = () => {
             </div>
 
             <div className="ac-topics-container">
-              {courseData.topics.map((topic) => (
+              {courseData.topics.map((topic, index) => (
                 <div 
                   key={topic.id} 
                   className="ac-topic-item"
                   id={`topic-${topic.id}`}
+                  draggable
+                  onDragStart={() => handleTopicDragStart(index)}
+                  onDragOver={(e) => handleTopicDragOver(e, index)}
+                  onDragEnd={handleTopicDragEnd}
+                  style={{ cursor: 'move', position: 'relative' }}
                 >
                   <div className="ac-topic-header">
-                    <h3> </h3>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1 }}>
+                      <GripVerticalIcon size={20} style={{ color: '#666', cursor: 'grab' }} />
+                      <h3>Topic {index + 1}</h3>
+                    </div>
                     <button 
                       type="button"
                       className="ac-remove-button"
-                      onClick={() => removeTopic(topic.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        removeTopic(topic.id);
+                      }}
                       disabled={courseData.topics.length === 1}
+                      style={{ position: 'absolute', top: '10px', right: '10px' }}
                     >
                       <TrashIcon size={16} />
                     </button>
@@ -327,19 +412,31 @@ const AddCourse = () => {
             </div>
 
             <div className="ac-assessments-container">
-              {courseData.assessments.map((assessment) => (
+              {courseData.assessments.map((assessment, index) => (
                 <div 
                   key={assessment.id} 
                   className="ac-assessment-item"
                   id={`assessment-${assessment.id}`}
+                  draggable
+                  onDragStart={() => handleAssessmentDragStart(index)}
+                  onDragOver={(e) => handleAssessmentDragOver(e, index)}
+                  onDragEnd={handleAssessmentDragEnd}
+                  style={{ cursor: 'move', position: 'relative' }}
                 >
                   <div className="ac-assessment-header">
-                    <h3> </h3>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1 }}>
+                      <GripVerticalIcon size={20} style={{ color: '#666', cursor: 'grab' }} />
+                      <h3>Assessment {index + 1}</h3>
+                    </div>
                     <button 
                       type="button"
                       className="ac-remove-button"
-                      onClick={() => removeAssessment(assessment.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        removeAssessment(assessment.id);
+                      }}
                       disabled={courseData.assessments.length === 1}
+                      style={{ position: 'absolute', top: '10px', right: '10px' }}
                     >
                       <TrashIcon size={16} />
                     </button>

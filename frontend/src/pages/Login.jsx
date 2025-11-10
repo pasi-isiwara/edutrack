@@ -1,24 +1,40 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { UserIcon, LockIcon } from 'lucide-react';
 import '../styles/Login.css';
+
 const Login = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    setFormData({ ...formData, [name]: value });
   };
-  const handleSubmit = (e) => {
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle login logic here
-    console.log('Login data:', formData);
+    try {
+      const res = await fetch('http://localhost:5000/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
+
+      localStorage.setItem('token', data.token);
+      alert('Login successful!');
+      navigate('/dashboard'); // Redirect to dashboard after login
+    } catch (err) {
+      alert(err.message);
+    }
   };
+
   return (
     <div className="auth-page fade-in">
       <div className="auth-container">
@@ -42,6 +58,7 @@ const Login = () => {
               />
             </div>
           </div>
+
           <div className="form-group">
             <label htmlFor="password">Password</label>
             <div className="input-container">
@@ -57,6 +74,7 @@ const Login = () => {
               />
             </div>
           </div>
+
           <div className="form-options">
             <label className="checkbox-container">
               <input type="checkbox" name="remember" />
@@ -66,10 +84,12 @@ const Login = () => {
               Forgot password?
             </Link>
           </div>
+
           <button type="submit" className="auth-button">
             Log In
           </button>
         </form>
+
         <p className="auth-redirect">
           Don't have an account? <Link to="/signup">Sign up</Link>
         </p>
@@ -77,4 +97,5 @@ const Login = () => {
     </div>
   );
 };
+
 export default Login;

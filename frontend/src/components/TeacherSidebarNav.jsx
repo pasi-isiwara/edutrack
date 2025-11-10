@@ -38,7 +38,7 @@ const TeacherSidebarNav = () => {
       label: 'Profile' 
     },
     { 
-      path: '/teacher/settings', 
+      path: '/settings', 
       icon: <SettingsIcon size={20} />, 
       label: 'Settings' 
     }

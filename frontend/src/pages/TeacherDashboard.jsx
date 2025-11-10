@@ -7,52 +7,37 @@ const TeacherDashboard = () => {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-    // Simulate API call to fetch teacher's courses
-    setTimeout(() => {
-      const mockCourses = [
-        {
-          id: 1,
-          code: 'CS101',
-          name: 'Introduction to Computer Science',
-          enrolledStudents: 32,
-          topics: 6,
-          completedTopics: 4,
-          assessments: 5,
-          completedAssessments: 2
-        },
-        {
-          id: 2,
-          code: 'CS201',
-          name: 'Data Structures and Algorithms',
-          enrolledStudents: 24,
-          topics: 8,
-          completedTopics: 3,
-          assessments: 6,
-          completedAssessments: 1
-        },
-        {
-          id: 3,
-          code: 'WD101',
-          name: 'Web Development Fundamentals',
-          enrolledStudents: 45,
-          topics: 10,
-          completedTopics: 6,
-          assessments: 4,
-          completedAssessments: 3
+    const fetchCourses = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('http://localhost:5000/api/courses');
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch courses');
         }
-      ];
-      setCourses(mockCourses);
-      setLoading(false);
-      // Animation for course cards
-      setTimeout(() => {
-        const cards = document.querySelectorAll('.course-card');
-        cards.forEach((card, index) => {
-          setTimeout(() => {
-            card.classList.add('visible');
-          }, 100 * index);
-        });
-      }, 100);
-    }, 800);
+        
+        const data = await response.json();
+        setCourses(data);
+        setLoading(false);
+        
+        // Animation for course cards
+        setTimeout(() => {
+          const cards = document.querySelectorAll('.course-card');
+          cards.forEach((card, index) => {
+            setTimeout(() => {
+              card.classList.add('visible');
+            }, 100 * index);
+          });
+        }, 100);
+        
+      } catch (error) {
+        console.error('Error fetching courses:', error);
+        setLoading(false);
+        alert('Failed to load courses. Please try again.');
+      }
+    };
+
+    fetchCourses();
   }, []);
   const getCompletionPercentage = (completed, total) => {
     return Math.round((completed / total) * 100);
