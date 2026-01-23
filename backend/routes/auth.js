@@ -44,8 +44,17 @@ router.post('/login', async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password_hash);
     if (!isMatch) return res.status(401).json({ message: 'Invalid credentials.' });
 
-    // Return user info only
-    res.json({ message: 'Login successful', user: { id: user.id, name: user.name, email: user.email } });
+    // Return user info with role
+    res.json({ 
+      message: 'Login successful', 
+      user: { 
+        id: user.id, 
+        name: user.name, 
+        email: user.email,
+        role: user.role || 'student' // Default to student if role is not set
+      },
+      token: 'dummy-token' // Keeping for compatibility
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error' });

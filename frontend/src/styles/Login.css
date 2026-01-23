@@ -5,6 +5,67 @@
   padding: 2rem;
   min-height: calc(100vh - 140px);
   background-color: var(--background-light);
+  position: relative;
+}
+
+.success-message {
+  position: fixed;
+  top: 2rem;
+  right: 2rem;
+  background-color: var(--success);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-100px);
+  opacity: 0;
+  transition: transform 0.5s ease, opacity 0.5s ease;
+  z-index: 1000;
+}
+
+.success-message.show {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.error-message {
+  position: fixed;
+  top: 2rem;
+  right: 2rem;
+  background-color: #ef4444;
+  color: #ffffff;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-100px);
+  opacity: 0;
+  transition: transform 0.5s ease, opacity 0.5s ease;
+  z-index: 1000;
+  font-weight: 500;
+}
+
+.error-message span {
+  color: #ffffff;
+}
+
+.error-message svg {
+  color: #ffffff;
+  stroke: #ffffff;
+  fill: none;
+  stroke-width: 2.5;
+  min-width: 16px;
+  min-height: 16px;
+}
+
+.error-message.show {
+  transform: translateY(0);
+  opacity: 1;
 }
 .auth-container {
   background-color: var(--background);

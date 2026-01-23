@@ -10,16 +10,26 @@ const TeacherDashboard = () => {
     const fetchCourses = async () => {
       try {
         setLoading(true);
-        const response = await fetch('http://localhost:5000/api/courses');
-        
+
+        // Get logged-in user's ID from localStorage
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (!user || !user.id) {
+          console.error('No user found in localStorage');
+          setLoading(false);
+          return;
+        }
+
+        // Fetch courses only for this teacher
+        const response = await fetch(`http://localhost:5000/api/courses/teacher/${user.id}`);
+
         if (!response.ok) {
           throw new Error('Failed to fetch courses');
         }
-        
+
         const data = await response.json();
         setCourses(data);
         setLoading(false);
-        
+
         // Animation for course cards
         setTimeout(() => {
           const cards = document.querySelectorAll('.course-card');
@@ -29,7 +39,7 @@ const TeacherDashboard = () => {
             }, 100 * index);
           });
         }, 100);
-        
+
       } catch (error) {
         console.error('Error fetching courses:', error);
         setLoading(false);
@@ -120,8 +130,8 @@ const TeacherDashboard = () => {
                       <span>{course.completedTopics}/{course.topics}</span>
                     </div>
                     <div className="progress-bar-container">
-                      <div 
-                        className="progress-bar" 
+                      <div
+                        className="progress-bar"
                         style={{ width: `${getCompletionPercentage(course.completedTopics, course.topics)}%` }}
                       ></div>
                     </div>
@@ -132,8 +142,8 @@ const TeacherDashboard = () => {
                       <span>{course.completedAssessments}/{course.assessments}</span>
                     </div>
                     <div className="progress-bar-container">
-                      <div 
-                        className="progress-bar" 
+                      <div
+                        className="progress-bar"
                         style={{ width: `${getCompletionPercentage(course.completedAssessments, course.assessments)}%` }}
                       ></div>
                     </div>

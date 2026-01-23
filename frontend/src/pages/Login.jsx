@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { UserIcon, LockIcon } from 'lucide-react';
+import { UserIcon, LockIcon, CheckCircle, XCircle } from 'lucide-react';
 import '../styles/Login.css';
 
 const Login = () => {
@@ -9,10 +9,30 @@ const Login = () => {
     email: '',
     password: '',
   });
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+  };
+
+  const showSuccessMessage = (message) => {
+    setSuccessMessage(message);
+    setShowSuccess(true);
+    setTimeout(() => {
+      setShowSuccess(false);
+    }, 3000);
+  };
+
+  const showErrorMessage = (message) => {
+    setErrorMessage(message);
+    setShowError(true);
+    setTimeout(() => {
+      setShowError(false);
+    }, 3000);
   };
 
   const handleSubmit = async (e) => {
@@ -28,15 +48,33 @@ const Login = () => {
       if (!res.ok) throw new Error(data.message);
 
       localStorage.setItem('token', data.token);
-      alert('Login successful!');
-      navigate('/dashboard'); // Redirect to dashboard after login
+      localStorage.setItem('user', JSON.stringify(data.user));
+      showSuccessMessage('Login successful!');
+      
+      // Redirect based on user role
+      const redirectPath = data.user.role === 'teacher' ? '/teacher/dashboard' : '/dashboard';
+      setTimeout(() => {
+        navigate(redirectPath);
+      }, 1500);
     } catch (err) {
-      alert(err.message);
+      showErrorMessage(err.message);
     }
   };
 
   return (
     <div className="auth-page fade-in">
+      {showSuccess && (
+        <div className={`success-message ${showSuccess ? 'show' : ''}`}>
+          <CheckCircle size={16} />
+          <span>{successMessage}</span>
+        </div>
+      )}
+      {showError && (
+        <div className={`error-message ${showError ? 'show' : ''}`}>
+          <XCircle size={16} />
+          <span>{errorMessage}</span>
+        </div>
+      )}
       <div className="auth-container">
         <h1 className="auth-title">Log In to EduTrack</h1>
         <p className="auth-description">

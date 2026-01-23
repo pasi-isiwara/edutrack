@@ -1,0 +1,222 @@
+.teacher-profile-container {
+  display: flex;
+  width: 100%;
+  min-height: calc(100vh - 64px);
+  background-color: var(--background-light, #f7f9fc);
+}
+
+.teacher-profile-content {
+  flex: 1;
+  padding: 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.profile-header {
+  margin-bottom: 2rem;
+}
+
+.profile-title {
+  font-size: 2rem;
+  color: var(--text-primary, #172b4d);
+  margin-bottom: 0.5rem;
+}
+
+.profile-subtitle {
+  color: var(--text-secondary, #5e6c84);
+  font-size: 1rem;
+}
+
+.loading-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  gap: 1rem;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(51, 102, 255, 0.2);
+  border-top-color: var(--primary, #3366ff);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Success and Error messages */
+.ac-success-message,
+.ac-error-message {
+  position: fixed;
+  top: 2rem;
+  right: 2rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: var(--shadow-hover, 0 4px 8px rgba(0, 0, 0, 0.15));
+  z-index: 1000;
+  opacity: 0;
+  transform: translateY(-100px);
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.ac-success-message {
+  background-color: var(--success, #36b37e);
+  color: white;
+}
+
+.ac-error-message {
+  background-color: var(--error, #ff5630);
+  color: white;
+  font-weight: 500;
+}
+
+.ac-success-message.show,
+.ac-error-message.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Form */
+.profile-form {
+  display: block;
+}
+
+/* Form Sections */
+.form-section {
+  background-color: var(--background, #ffffff);
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow, 0 2px 4px rgba(0, 0, 0, 0.1));
+  margin-bottom: 2rem;
+}
+
+.ac-section-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.25rem;
+  color: var(--text-primary, #172b4d);
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+}
+
+.ac-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.ac-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.ac-form-group label {
+  font-weight: 500;
+  color: var(--text-primary, #172b4d);
+  font-size: 0.9rem;
+}
+
+.ac-form-group input,
+.ac-form-group textarea {
+  padding: 0.75rem;
+  border: 1px solid var(--border, #dfe1e6);
+  border-radius: 4px;
+  font-size: 1rem;
+  background-color: var(--background, #ffffff);
+  color: var(--text-primary, #172b4d);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  width: 100%;
+}
+
+.ac-form-group input:focus,
+.ac-form-group textarea:focus {
+  border-color: var(--primary, #3366ff);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(51, 102, 255, 0.1);
+}
+
+.ac-form-group input.disabled-input {
+  background-color: var(--background-light, #f7f9fc);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.ac-form-group .input-help {
+  font-size: 0.85rem;
+  color: var(--text-secondary, #5e6c84);
+}
+
+.ac-error {
+  border-color: var(--error, #ff5630) !important;
+}
+
+.ac-error-message {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--error, #ff5630);
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+}
+
+.ac-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.ac-submit-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--primary, #3366ff);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.ac-submit-button:hover:not(:disabled) {
+  background-color: var(--primary-dark, #2952cc);
+  transform: translateY(-1px);
+}
+
+.ac-submit-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+@media (max-width: 768px) {
+  .teacher-profile-content {
+    padding: 1rem;
+  }
+
+  .ac-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ac-form-actions {
+    flex-direction: column;
+  }
+
+  .ac-submit-button {
+    width: 100%;
+    justify-content: center;
+  }
+}

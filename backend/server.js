@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import authRoutes from './routes/auth.js';
 import coursesRoutes from './routes/courses.js';
 import careerRoutes from './routes/career.js';
+import profileRoutes from './routes/profile.js';
 import { testConnection } from './db.js';
 
 dotenv.config();
@@ -15,6 +16,7 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/courses', coursesRoutes);
 app.use('/api/career', careerRoutes);
+app.use('/api/profile', profileRoutes);
 
 const PORT = process.env.PORT || 5000;
 

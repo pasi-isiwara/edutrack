@@ -13,6 +13,7 @@ import AddCourse from './pages/AddCourse'
 import ViewCourse from './pages/ViewCourse'
 import UpdateCourse from './pages/UpdateCourse'
 import TeacherCareerManagement from './pages/TeacherCareerManagement'
+import TeacherProfile from './pages/TeacherProfile'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import './App.css'
@@ -87,6 +88,10 @@ import './App.css'
           <Route
             path="/teacher/career-management"
             element={<TeacherCareerManagement />}
+          />
+          <Route
+            path="/teacher/profile"
+            element={<TeacherProfile />}
           />
         </Routes>
       </div>

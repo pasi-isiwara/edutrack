@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { UserIcon, MailIcon, LockIcon } from 'lucide-react';
+import { UserIcon, MailIcon, LockIcon, CheckCircle, XCircle } from 'lucide-react';
 import '../styles/SignUp.css';
 
 const Signup = () => {
@@ -11,16 +11,36 @@ const Signup = () => {
     password: '',
     confirmPassword: '',
   });
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
+  const showSuccessMessage = (message) => {
+    setSuccessMessage(message);
+    setShowSuccess(true);
+    setTimeout(() => {
+      setShowSuccess(false);
+    }, 3000);
+  };
+
+  const showErrorMessage = (message) => {
+    setErrorMessage(message);
+    setShowError(true);
+    setTimeout(() => {
+      setShowError(false);
+    }, 3000);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
-      alert('Passwords do not match');
+      showErrorMessage('Passwords do not match');
       return;
     }
 
@@ -36,15 +56,29 @@ const Signup = () => {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
-      alert(data.message);
-      navigate('/login'); // Redirect to login after signup
+      showSuccessMessage('Account created successfully!');
+      setTimeout(() => {
+        navigate('/login'); // Redirect to login after signup
+      }, 1500);
     } catch (err) {
-      alert(err.message);
+      showErrorMessage(err.message);
     }
   };
 
   return (
     <div className="auth-page fade-in">
+      {showSuccess && (
+        <div className={`success-message ${showSuccess ? 'show' : ''}`}>
+          <CheckCircle size={16} />
+          <span>{successMessage}</span>
+        </div>
+      )}
+      {showError && (
+        <div className={`error-message ${showError ? 'show' : ''}`}>
+          <XCircle size={16} />
+          <span>{errorMessage}</span>
+        </div>
+      )}
       <div className="auth-container">
         <h1 className="auth-title">Create an Account</h1>
         <p className="auth-description">

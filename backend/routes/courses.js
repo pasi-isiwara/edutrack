@@ -50,6 +50,57 @@ router.get('/', async (req, res) => {
   }
 });
 
+// Get courses by teacher ID
+router.get('/teacher/:teacherId', async (req, res) => {
+  try {
+    const { teacherId } = req.params;
+
+    // Get courses for this teacher
+    const [courses] = await db.query(
+      `SELECT id, name, code, enrollment_key, eligibility_criteria, special_notes, teacher_id 
+       FROM courses 
+       WHERE teacher_id = ?
+       ORDER BY created_at DESC`,
+      [teacherId]
+    );
+
+    // For each course, get topics and assessments count
+    const coursesWithStats = await Promise.all(
+      courses.map(async (course) => {
+        // Get topics count
+        const [topicsResult] = await db.query(
+          `SELECT COUNT(*) as total FROM topics WHERE course_id = ?`,
+          [course.id]
+        );
+
+        // Get assessments count
+        const [assessmentsResult] = await db.query(
+          `SELECT COUNT(*) as total FROM assessments WHERE course_id = ?`,
+          [course.id]
+        );
+
+        return {
+          id: course.id,
+          code: course.code,
+          name: course.name,
+          enrollmentKey: course.enrollment_key,
+          enrolledStudents: 0,
+          topics: topicsResult[0].total,
+          completedTopics: 0,
+          assessments: assessmentsResult[0].total,
+          completedAssessments: 0
+        };
+      })
+    );
+
+    res.json(coursesWithStats);
+
+  } catch (error) {
+    console.error('Error fetching teacher courses:', error);
+    res.status(500).json({ error: 'Failed to fetch teacher courses' });
+  }
+});
+
 // Get course by ID with topics and assessments
 router.get('/:courseId', async (req, res) => {
   try {
@@ -117,8 +168,8 @@ router.post('/create', async (req, res) => {
 
     // Validate required fields
     if (!name || !code || !enrollmentKey) {
-      return res.status(400).json({ 
-        error: 'Missing required fields: name, code, and enrollmentKey are required' 
+      return res.status(400).json({
+        error: 'Missing required fields: name, code, and enrollmentKey are required'
       });
     }
 
@@ -138,7 +189,7 @@ router.post('/create', async (req, res) => {
         topic.name,
         topic.hours
       ]);
-      
+
       await db.query(
         `INSERT INTO topics (course_id, name, hours) VALUES ?`,
         [topicValues]
@@ -155,14 +206,14 @@ router.post('/create', async (req, res) => {
         assessment.contentCovered || null,
         assessment.structure || null
       ]);
-      
+
       await db.query(
         `INSERT INTO assessments (course_id, name, date, marks, content_covered, structure) VALUES ?`,
         [assessmentValues]
       );
     }
 
-    res.status(201).json({ 
+    res.status(201).json({
       message: 'Course created successfully',
       courseId: courseId
     });
@@ -189,8 +240,8 @@ router.put('/update/:courseId', async (req, res) => {
 
     // Validate required fields
     if (!name || !code || !enrollmentKey) {
-      return res.status(400).json({ 
-        error: 'Missing required fields: name, code, and enrollmentKey are required' 
+      return res.status(400).json({
+        error: 'Missing required fields: name, code, and enrollmentKey are required'
       });
     }
 
@@ -213,7 +264,7 @@ router.put('/update/:courseId', async (req, res) => {
         topic.name,
         topic.hours
       ]);
-      
+
       await db.query(
         `INSERT INTO topics (course_id, name, hours) VALUES ?`,
         [topicValues]
@@ -230,14 +281,14 @@ router.put('/update/:courseId', async (req, res) => {
         assessment.contentCovered || null,
         assessment.structure || null
       ]);
-      
+
       await db.query(
         `INSERT INTO assessments (course_id, name, date, marks, content_covered, structure) VALUES ?`,
         [assessmentValues]
       );
     }
 
-    res.json({ 
+    res.json({
       message: 'Course updated successfully',
       courseId: courseId
     });
