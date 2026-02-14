@@ -124,6 +124,36 @@ pipeline {
                     ).trim()
 
                     withCredentials([sshUserPrivateKey(credentialsId: 'droplet-ssh-key', keyFileVariable: 'SSH_KEY')]) {
+                        // Wait for SSH to become available (droplet may still be booting)
+                        sh """
+                            echo 'Waiting for SSH on ${dropletIP}...'
+                            for i in \$(seq 1 30); do
+                                if ssh -o StrictHostKeyChecking=no -o ConnectTimeout=5 -i \$SSH_KEY root@${dropletIP} 'echo SSH_OK' 2>/dev/null; then
+                                    echo 'SSH is ready!'
+                                    break
+                                fi
+                                echo "Attempt \$i/30 - SSH not ready, waiting 10s..."
+                                sleep 10
+                            done
+                        """
+
+                        // Wait for cloud-init (user_data) to finish installing Docker
+                        sh """
+                            ssh -o StrictHostKeyChecking=no -i \$SSH_KEY root@${dropletIP} '
+                                echo "Waiting for cloud-init to finish..."
+                                cloud-init status --wait || true
+                                echo "Cloud-init done. Checking Docker..."
+                                for i in \$(seq 1 12); do
+                                    if command -v docker &>/dev/null; then
+                                        echo "Docker is installed!"
+                                        break
+                                    fi
+                                    echo "Attempt \$i/12 - Docker not ready, waiting 10s..."
+                                    sleep 10
+                                done
+                            '
+                        """
+
                         // Copy docker-compose.yml to the droplet
                         sh """
                             scp -o StrictHostKeyChecking=no -i \$SSH_KEY docker-compose.yml root@${dropletIP}:/opt/edutrack/docker-compose.yml
@@ -131,10 +161,10 @@ pipeline {
                         // Pull latest images and deploy
                         sh """
                             ssh -o StrictHostKeyChecking=no -i \$SSH_KEY root@${dropletIP} '
+                                cd /opt/edutrack
                                 docker pull ${BACKEND_IMAGE}:latest
                                 docker pull ${FRONTEND_IMAGE}:latest
-                                cd /opt/edutrack
-                                docker compose down
+                                docker compose down || true
                                 docker compose up -d
                             '
                         """
