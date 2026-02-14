@@ -45,6 +45,15 @@ resource "digitalocean_droplet" "vm" {
     echo "${var.ssh_public_key}" >> /root/.ssh/authorized_keys
     chmod 600 /root/.ssh/authorized_keys
 
+    # Disable root password expiry (DigitalOcean sets expired password by default)
+    passwd -l root
+    chage -I -1 -m 0 -M 99999 -E -1 root
+
+    # Ensure SSH allows key-based root login without password prompt
+    sed -i 's/^#\?PermitRootLogin.*/PermitRootLogin prohibit-password/' /etc/ssh/sshd_config
+    sed -i 's/^#\?PasswordAuthentication.*/PasswordAuthentication no/' /etc/ssh/sshd_config
+    systemctl restart sshd
+
     # Install Docker
     apt-get update -y
     apt-get install -y apt-transport-https ca-certificates curl software-properties-common
