@@ -1,0 +1,24 @@
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Node modules
+node_modules/
+
+# Terraform state (contains sensitive info)
+do-terraform/terraform.tfstate
+do-terraform/terraform.tfstate.backup
+do-terraform/.terraform/
+
+# IDE
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*

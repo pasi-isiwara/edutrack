@@ -3,9 +3,7 @@ version: '3.8'
 services:
   # Backend API
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    image: pasinduisiwara/backend-app:latest
     container_name: edutrack-backend
     restart: unless-stopped
     ports:
@@ -23,9 +21,7 @@ services:
 
   # Frontend
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
+    image: pasinduisiwara/frontend-app:latest
     container_name: edutrack-frontend
     restart: unless-stopped
     ports:

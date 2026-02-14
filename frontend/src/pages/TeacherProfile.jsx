@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import API_URL from '../config';
 import TeacherSidebarNav from '../components/TeacherSidebarNav';
 
 const TeacherProfile = () => {
@@ -34,7 +35,7 @@ const TeacherProfile = () => {
       }
 
       console.log('Fetching profile for user ID:', user.id);
-      const response = await fetch(`http://localhost:5000/api/profile/teacher/${user.id}`);
+      const response = await fetch(`${API_URL}/profile/teacher/${user.id}`);
       const data = await response.json();
 
       console.log('Profile response:', response.status, data);
@@ -110,7 +111,7 @@ const TeacherProfile = () => {
     setSaving(true);
     try {
       const user = JSON.parse(localStorage.getItem('user'));
-      const response = await fetch(`http://localhost:5000/api/profile/teacher/${user.id}`, {
+      const response = await fetch(`${API_URL}/profile/teacher/${user.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(profileData)

@@ -4,6 +4,7 @@ import {
   BookOpenIcon, UsersIcon, CheckCircleIcon, XCircleIcon, 
   EditIcon, ClipboardListIcon, AlertCircleIcon, SaveIcon,ClockIcon
 } from 'lucide-react';
+import API_URL from '../config';
 import '../styles/ViewCourse.css';
 import TeacherSidebarNav from '../components/TeacherSidebarNav';
 
@@ -20,7 +21,7 @@ const ViewCourse = () => {
     const fetchCourseDetails = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`http://localhost:5000/api/courses/${courseId}`);
+        const response = await fetch(`${API_URL}/courses/${courseId}`);
         
         if (!response.ok) {
           throw new Error('Failed to fetch course details');
@@ -93,7 +94,7 @@ const ViewCourse = () => {
       });
 
       // Update in database
-      const response = await fetch(`http://localhost:5000/api/courses/topics/${topicId}/completion`, {
+      const response = await fetch(`${API_URL}/courses/topics/${topicId}/completion`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -122,7 +123,7 @@ const ViewCourse = () => {
       });
 
       // Update in database
-      const response = await fetch(`http://localhost:5000/api/courses/assessments/${assessmentId}/completion`, {
+      const response = await fetch(`${API_URL}/courses/assessments/${assessmentId}/completion`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -147,7 +148,7 @@ const ViewCourse = () => {
   const saveNotes = async () => {
     try {
       // Update in database
-      const response = await fetch(`http://localhost:5000/api/courses/${courseId}/notes`, {
+      const response = await fetch(`${API_URL}/courses/${courseId}/notes`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

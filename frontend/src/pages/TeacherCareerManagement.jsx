@@ -4,6 +4,7 @@ import {
   MapPinIcon, ClockIcon, UsersIcon, PlusIcon, 
   TrashIcon, EditIcon, SaveIcon, XIcon, TrophyIcon
 } from 'lucide-react';
+import API_URL from '../config';
 import '../styles/TeacherCareerManagement.css';
 import TeacherSidebarNav from '../components/TeacherSidebarNav';
 const TeacherCareerManagement = () => {
@@ -53,22 +54,22 @@ const TeacherCareerManagement = () => {
         setLoading(true);
         
         // Fetch careers from API
-        const careersResponse = await fetch('http://localhost:5000/api/career/careers');
+        const careersResponse = await fetch(`${API_URL}/career/careers`);
         const careersData = await careersResponse.json();
         setCareers(careersData);
 
         // Fetch all available courses
-        const coursesResponse = await fetch('http://localhost:5000/api/career/courses');
+        const coursesResponse = await fetch(`${API_URL}/career/courses`);
         const coursesData = await coursesResponse.json();
         setAllCourses(coursesData);
 
         // Fetch workshops and events from API
-        const workshopsResponse = await fetch('http://localhost:5000/api/career/workshops');
+        const workshopsResponse = await fetch(`${API_URL}/career/workshops`);
         const workshopsData = await workshopsResponse.json();
         setWorkshops(workshopsData);
 
         // Fetch competitions from API
-        const competitionsResponse = await fetch('http://localhost:5000/api/career/competitions');
+        const competitionsResponse = await fetch(`${API_URL}/career/competitions`);
         const competitionsData = await competitionsResponse.json();
         setCompetitions(competitionsData);
         
@@ -112,7 +113,7 @@ const TeacherCareerManagement = () => {
     if (!newCareer.id || !newCareer.name) return;
     
     try {
-      const response = await fetch('http://localhost:5000/api/career/careers', {
+      const response = await fetch(`${API_URL}/career/careers`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -123,7 +124,7 @@ const TeacherCareerManagement = () => {
       if (response.ok) {
         await response.json();
         // Fetch updated careers list to get the complete data with recommended courses
-        const careersResponse = await fetch('http://localhost:5000/api/career/careers');
+        const careersResponse = await fetch(`${API_URL}/career/careers`);
         const careersData = await careersResponse.json();
         setCareers(careersData);
         setNewCareer({ id: '', name: '', recommendedCourses: [] });
@@ -141,7 +142,7 @@ const TeacherCareerManagement = () => {
     if (!editingCareer || !editingCareer.id || !editingCareer.name) return;
     
     try {
-      const response = await fetch(`http://localhost:5000/api/career/careers/${editingCareer.originalId}`, {
+      const response = await fetch(`${API_URL}/career/careers/${editingCareer.originalId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -156,7 +157,7 @@ const TeacherCareerManagement = () => {
       if (response.ok) {
         await response.json();
         // Fetch updated careers list
-        const careersResponse = await fetch('http://localhost:5000/api/career/careers');
+        const careersResponse = await fetch(`${API_URL}/career/careers`);
         const careersData = await careersResponse.json();
         setCareers(careersData);
         
@@ -175,7 +176,7 @@ const TeacherCareerManagement = () => {
     if (!window.confirm('Are you sure you want to delete this career path?')) return;
     
     try {
-      const response = await fetch(`http://localhost:5000/api/career/careers/${careerId}`, {
+      const response = await fetch(`${API_URL}/career/careers/${careerId}`, {
         method: 'DELETE'
       });
 
@@ -222,7 +223,7 @@ const TeacherCareerManagement = () => {
         skills: cleanedSkills
       };
 
-      const response = await fetch('http://localhost:5000/api/career/workshops', {
+      const response = await fetch(`${API_URL}/career/workshops`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -232,7 +233,7 @@ const TeacherCareerManagement = () => {
 
       if (response.ok) {
         // Fetch updated workshops list
-        const workshopsResponse = await fetch('http://localhost:5000/api/career/workshops');
+        const workshopsResponse = await fetch(`${API_URL}/career/workshops`);
         const workshopsData = await workshopsResponse.json();
         setWorkshops(workshopsData);
         
@@ -280,7 +281,7 @@ const TeacherCareerManagement = () => {
         skills: cleanedSkills
       };
 
-      const response = await fetch(`http://localhost:5000/api/career/workshops/${editingWorkshop.id}`, {
+      const response = await fetch(`${API_URL}/career/workshops/${editingWorkshop.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -290,7 +291,7 @@ const TeacherCareerManagement = () => {
 
       if (response.ok) {
         // Fetch updated workshops list
-        const workshopsResponse = await fetch('http://localhost:5000/api/career/workshops');
+        const workshopsResponse = await fetch(`${API_URL}/career/workshops`);
         const workshopsData = await workshopsResponse.json();
         setWorkshops(workshopsData);
         
@@ -311,13 +312,13 @@ const TeacherCareerManagement = () => {
     try {
       const workshopToDelete = workshops.find(w => w.id === workshopId);
       
-      const response = await fetch(`http://localhost:5000/api/career/workshops/${workshopId}`, {
+      const response = await fetch(`${API_URL}/career/workshops/${workshopId}`, {
         method: 'DELETE'
       });
 
       if (response.ok) {
         // Fetch updated workshops list
-        const workshopsResponse = await fetch('http://localhost:5000/api/career/workshops');
+        const workshopsResponse = await fetch(`${API_URL}/career/workshops`);
         const workshopsData = await workshopsResponse.json();
         setWorkshops(workshopsData);
         
@@ -401,7 +402,7 @@ const TeacherCareerManagement = () => {
         eligibility: newCompetition.eligibility || null
       };
 
-      const response = await fetch('http://localhost:5000/api/career/competitions', {
+      const response = await fetch(`${API_URL}/career/competitions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -411,7 +412,7 @@ const TeacherCareerManagement = () => {
 
       if (response.ok) {
         // Fetch updated competitions list
-        const competitionsResponse = await fetch('http://localhost:5000/api/career/competitions');
+        const competitionsResponse = await fetch(`${API_URL}/career/competitions`);
         const competitionsData = await competitionsResponse.json();
         setCompetitions(competitionsData);
         
@@ -455,7 +456,7 @@ const TeacherCareerManagement = () => {
         eligibility: editingCompetition.eligibility || null
       };
 
-      const response = await fetch(`http://localhost:5000/api/career/competitions/${editingCompetition.id}`, {
+      const response = await fetch(`${API_URL}/career/competitions/${editingCompetition.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -465,7 +466,7 @@ const TeacherCareerManagement = () => {
 
       if (response.ok) {
         // Fetch updated competitions list
-        const competitionsResponse = await fetch('http://localhost:5000/api/career/competitions');
+        const competitionsResponse = await fetch(`${API_URL}/career/competitions`);
         const competitionsData = await competitionsResponse.json();
         setCompetitions(competitionsData);
         
@@ -484,13 +485,13 @@ const TeacherCareerManagement = () => {
     if (!window.confirm('Are you sure you want to delete this competition?')) return;
     
     try {
-      const response = await fetch(`http://localhost:5000/api/career/competitions/${competitionId}`, {
+      const response = await fetch(`${API_URL}/career/competitions/${competitionId}`, {
         method: 'DELETE'
       });
 
       if (response.ok) {
         // Fetch updated competitions list
-        const competitionsResponse = await fetch('http://localhost:5000/api/career/competitions');
+        const competitionsResponse = await fetch(`${API_URL}/career/competitions`);
         const competitionsData = await competitionsResponse.json();
         setCompetitions(competitionsData);
         

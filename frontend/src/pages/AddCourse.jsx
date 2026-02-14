@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { 
   BookOpenIcon, PlusIcon, TrashIcon, AlertCircleIcon, SaveIcon, ArrowLeftIcon, GripVerticalIcon
 } from 'lucide-react';
+import API_URL from '../config';
 import '../styles/AddCourse.css';
 import TeacherSidebarNav from '../components/TeacherSidebarNav';
 
@@ -191,7 +192,7 @@ const AddCourse = () => {
 
     try {
       // Send course data to backend
-      const response = await fetch('http://localhost:5000/api/courses/create', {
+      const response = await fetch(`${API_URL}/courses/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

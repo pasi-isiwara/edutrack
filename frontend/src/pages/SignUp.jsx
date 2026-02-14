@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserIcon, MailIcon, LockIcon, CheckCircle, XCircle } from 'lucide-react';
+import API_URL from '../config';
 import '../styles/SignUp.css';
 
 const Signup = () => {
@@ -45,7 +46,7 @@ const Signup = () => {
     }
 
     try {
-      const res = await fetch('http://localhost:5000/api/auth/signup', {
+      const res = await fetch(`${API_URL}/auth/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

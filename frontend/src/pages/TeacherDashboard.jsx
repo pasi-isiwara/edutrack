@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { BookIcon, PlusIcon, UsersIcon, ClipboardListIcon, AwardIcon } from 'lucide-react';
+import API_URL from '../config';
 import '../styles/TeacherDashboard.css';
 import TeacherSidebarNav from '../components/TeacherSidebarNav';
 const TeacherDashboard = () => {
@@ -20,7 +21,7 @@ const TeacherDashboard = () => {
         }
 
         // Fetch courses only for this teacher
-        const response = await fetch(`http://localhost:5000/api/courses/teacher/${user.id}`);
+        const response = await fetch(`${API_URL}/courses/teacher/${user.id}`);
 
         if (!response.ok) {
           throw new Error('Failed to fetch courses');

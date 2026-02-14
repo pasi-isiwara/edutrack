@@ -4,6 +4,7 @@ import {
   BriefcaseIcon, GraduationCapIcon, CalendarIcon, 
   MapPinIcon, ClockIcon, UsersIcon, CheckIcon, FilterIcon, TrophyIcon
 } from 'lucide-react';
+import API_URL from '../config';
 import '../styles/CareerDevelopment.css';
 import SidebarNav from '../components/SidebarNav';
 
@@ -70,12 +71,12 @@ const CareerDevelopment = () => {
         setLoading(true);
         
         // Fetch workshops and events
-        const workshopsResponse = await fetch('http://localhost:5000/api/career/workshops');
+        const workshopsResponse = await fetch(`${API_URL}/career/workshops`);
         const workshopsData = await workshopsResponse.json();
         setWorkshops(workshopsData);
 
         // Fetch competitions
-        const competitionsResponse = await fetch('http://localhost:5000/api/career/competitions');
+        const competitionsResponse = await fetch(`${API_URL}/career/competitions`);
         const competitionsData = await competitionsResponse.json();
         setCompetitions(competitionsData);
         

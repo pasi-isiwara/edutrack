@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserIcon, LockIcon, CheckCircle, XCircle } from 'lucide-react';
+import API_URL from '../config';
 import '../styles/Login.css';
 
 const Login = () => {
@@ -38,7 +39,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch('http://localhost:5000/api/auth/login', {
+      const res = await fetch(`${API_URL}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),

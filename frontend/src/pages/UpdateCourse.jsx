@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { 
   BookOpenIcon, PlusIcon, TrashIcon, AlertCircleIcon, SaveIcon, ArrowLeftIcon, GripVerticalIcon
 } from 'lucide-react';
+import API_URL from '../config';
 import '../styles/UpdateCourse.css';
 import TeacherSidebarNav from '../components/TeacherSidebarNav';
 const UpdateCourse = () => {
@@ -17,7 +18,7 @@ const UpdateCourse = () => {
     const fetchCourseData = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`http://localhost:5000/api/courses/${courseId}`);
+        const response = await fetch(`${API_URL}/courses/${courseId}`);
         
         if (!response.ok) {
           throw new Error('Failed to fetch course details');
@@ -230,7 +231,7 @@ const UpdateCourse = () => {
 
     try {
       // Send update request to backend
-      const response = await fetch(`http://localhost:5000/api/courses/update/${courseId}`, {
+      const response = await fetch(`${API_URL}/courses/update/${courseId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
