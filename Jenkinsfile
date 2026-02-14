@@ -127,14 +127,21 @@ pipeline {
                         // Wait for SSH to become available (droplet may still be booting)
                         sh """
                             echo 'Waiting for SSH on ${dropletIP}...'
+                            SSH_READY=false
                             for i in \$(seq 1 30); do
                                 if ssh -o StrictHostKeyChecking=no -o ConnectTimeout=5 -i \$SSH_KEY root@${dropletIP} 'echo SSH_OK' 2>/dev/null; then
                                     echo 'SSH is ready!'
+                                    SSH_READY=true
                                     break
                                 fi
                                 echo "Attempt \$i/30 - SSH not ready, waiting 10s..."
                                 sleep 10
                             done
+                            if [ "\$SSH_READY" = "false" ]; then
+                                echo 'ERROR: SSH never became available after 30 attempts!'
+                                echo 'Check that the Jenkins SSH key matches the DigitalOcean droplet SSH key.'
+                                exit 1
+                            fi
                         """
 
                         // Wait for cloud-init (user_data) to finish installing Docker
