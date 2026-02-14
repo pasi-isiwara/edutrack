@@ -123,22 +123,29 @@ pipeline {
                         returnStdout: true
                     ).trim()
 
-                    withCredentials([sshUserPrivateKey(credentialsId: 'droplet-ssh-key', keyFileVariable: 'SSH_KEY')]) {
-                        // Wait for SSH to become available (droplet may still be booting)
+                    withCredentials([sshUserPrivateKey(credentialsId: 'do-ssh-key', keyFileVariable: 'SSH_KEY')]) {
+                        // Debug: Show SSH key info and test connectivity
                         sh """
                             echo 'Waiting for SSH on ${dropletIP}...'
+                            echo '--- Debug: SSH key file info ---'
+                            ls -la \$SSH_KEY
+                            ssh-keygen -lf \$SSH_KEY -E md5
+                            echo '--- Debug: Testing SSH with verbose output ---'
+                            ssh -vvv -o StrictHostKeyChecking=no -o ConnectTimeout=10 -i \$SSH_KEY root@${dropletIP} 'echo SSH_OK' || true
+                            echo '--- End debug output ---'
+
                             SSH_READY=false
-                            for i in \$(seq 1 30); do
-                                if ssh -o StrictHostKeyChecking=no -o ConnectTimeout=5 -i \$SSH_KEY root@${dropletIP} 'echo SSH_OK' 2>/dev/null; then
+                            for i in \$(seq 1 18); do
+                                if ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 -i \$SSH_KEY root@${dropletIP} 'echo SSH_OK'; then
                                     echo 'SSH is ready!'
                                     SSH_READY=true
                                     break
                                 fi
-                                echo "Attempt \$i/30 - SSH not ready, waiting 10s..."
+                                echo "Attempt \$i/18 - SSH not ready, waiting 10s..."
                                 sleep 10
                             done
                             if [ "\$SSH_READY" = "false" ]; then
-                                echo 'ERROR: SSH never became available after 30 attempts!'
+                                echo 'ERROR: SSH never became available after 18 attempts (3 minutes)!'
                                 echo 'Check that the Jenkins SSH key matches the DigitalOcean droplet SSH key.'
                                 exit 1
                             fi
@@ -150,12 +157,12 @@ pipeline {
                                 echo "Waiting for cloud-init to finish..."
                                 cloud-init status --wait || true
                                 echo "Cloud-init done. Checking Docker..."
-                                for i in \$(seq 1 12); do
+                                for i in \$(seq 1 18); do
                                     if command -v docker &>/dev/null; then
                                         echo "Docker is installed!"
                                         break
                                     fi
-                                    echo "Attempt \$i/12 - Docker not ready, waiting 10s..."
+                                    echo "Attempt \$i/18 - Docker not ready, waiting 10s..."
                                     sleep 10
                                 done
                             '
