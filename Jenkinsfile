@@ -91,8 +91,17 @@ pipeline {
         stage('Terraform Plan') {
             steps {
                 dir('do-terraform') {
-                    withCredentials([string(credentialsId: 'do-api-token', variable: 'DO_TOKEN')]) {
-                        sh 'terraform plan -var="do_token=$DO_TOKEN" -out=tfplan'
+                    withCredentials([
+                        string(credentialsId: 'do-api-token', variable: 'DO_TOKEN'),
+                        sshUserPrivateKey(credentialsId: 'do-ssh-key', keyFileVariable: 'SSH_KEY')
+                    ]) {
+                        sh '''
+                            SSH_PUB_KEY=$(ssh-keygen -yf $SSH_KEY)
+                            terraform plan \
+                                -var="do_token=$DO_TOKEN" \
+                                -var="ssh_public_key=$SSH_PUB_KEY" \
+                                -out=tfplan
+                        '''
                     }
                 }
             }
@@ -104,9 +113,18 @@ pipeline {
         stage('Terraform Apply') {
             steps {
                 dir('do-terraform') {
-                    withCredentials([string(credentialsId: 'do-api-token', variable: 'DO_TOKEN')]) {
+                    withCredentials([
+                        string(credentialsId: 'do-api-token', variable: 'DO_TOKEN'),
+                        sshUserPrivateKey(credentialsId: 'do-ssh-key', keyFileVariable: 'SSH_KEY')
+                    ]) {
                         input message: 'Apply Terraform changes?', ok: 'Apply'
-                        sh 'terraform apply -var="do_token=$DO_TOKEN" -auto-approve tfplan'
+                        sh '''
+                            SSH_PUB_KEY=$(ssh-keygen -yf $SSH_KEY)
+                            terraform apply \
+                                -var="do_token=$DO_TOKEN" \
+                                -var="ssh_public_key=$SSH_PUB_KEY" \
+                                -auto-approve tfplan
+                        '''
                     }
                 }
             }
@@ -124,29 +142,21 @@ pipeline {
                     ).trim()
 
                     withCredentials([sshUserPrivateKey(credentialsId: 'do-ssh-key', keyFileVariable: 'SSH_KEY')]) {
-                        // Debug: Show SSH key info and test connectivity
+                        // Wait for SSH to become available (droplet may still be booting)
                         sh """
                             echo 'Waiting for SSH on ${dropletIP}...'
-                            echo '--- Debug: SSH key file info ---'
-                            ls -la \$SSH_KEY
-                            ssh-keygen -lf \$SSH_KEY -E md5
-                            echo '--- Debug: Testing SSH with verbose output ---'
-                            ssh -vvv -o StrictHostKeyChecking=no -o ConnectTimeout=10 -i \$SSH_KEY root@${dropletIP} 'echo SSH_OK' || true
-                            echo '--- End debug output ---'
-
                             SSH_READY=false
-                            for i in \$(seq 1 18); do
-                                if ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 -i \$SSH_KEY root@${dropletIP} 'echo SSH_OK'; then
+                            for i in \$(seq 1 30); do
+                                if ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 -i \$SSH_KEY root@${dropletIP} 'echo SSH_OK' 2>&1; then
                                     echo 'SSH is ready!'
                                     SSH_READY=true
                                     break
                                 fi
-                                echo "Attempt \$i/18 - SSH not ready, waiting 10s..."
+                                echo "Attempt \$i/30 - SSH not ready, waiting 10s..."
                                 sleep 10
                             done
                             if [ "\$SSH_READY" = "false" ]; then
-                                echo 'ERROR: SSH never became available after 18 attempts (3 minutes)!'
-                                echo 'Check that the Jenkins SSH key matches the DigitalOcean droplet SSH key.'
+                                echo 'ERROR: SSH never became available after 30 attempts (5 minutes)!'
                                 exit 1
                             fi
                         """

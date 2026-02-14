@@ -22,6 +22,12 @@ variable "ssh_key_fingerprint" {
   default     = ""
 }
 
+variable "ssh_public_key" {
+  type        = string
+  description = "SSH public key content to inject into the droplet"
+  default     = ""
+}
+
 resource "digitalocean_droplet" "vm" {
   name     = "my-first-vm"
   region   = "blr1"          # Bangalore (closest to SL)
@@ -32,6 +38,12 @@ resource "digitalocean_droplet" "vm" {
   user_data = <<-EOF
     #!/bin/bash
     set -e
+
+    # Inject SSH public key for root access
+    mkdir -p /root/.ssh
+    chmod 700 /root/.ssh
+    echo "${var.ssh_public_key}" >> /root/.ssh/authorized_keys
+    chmod 600 /root/.ssh/authorized_keys
 
     # Install Docker
     apt-get update -y
