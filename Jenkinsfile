@@ -68,18 +68,25 @@ pipeline {
 
         // =========================
         // Terraform Init
+        // Persist state outside workspace so cleanWs() doesn't destroy it
         // =========================
         stage('Terraform Init') {
             steps {
                 dir('do-terraform') {
-                    sh 'terraform init'
+                    sh '''
+                        mkdir -p /var/lib/jenkins/terraform-state
+                        cp -n terraform.tfstate /var/lib/jenkins/terraform-state/ 2>/dev/null || true
+                        ln -sf /var/lib/jenkins/terraform-state/terraform.tfstate terraform.tfstate
+                        cp -n terraform.tfstate.backup /var/lib/jenkins/terraform-state/ 2>/dev/null || true
+                        ln -sf /var/lib/jenkins/terraform-state/terraform.tfstate.backup terraform.tfstate.backup
+                        terraform init
+                    '''
                 }
             }
         }
 
         // =========================
         // Terraform Plan
-        // FIX: Single quotes so shell resolves $DO_TOKEN securely
         // =========================
         stage('Terraform Plan') {
             steps {
@@ -92,12 +99,9 @@ pipeline {
         }
 
         // =========================
-        // Terraform Apply (Only main branch)
+        // Terraform Apply
         // =========================
         stage('Terraform Apply') {
-            when {
-                branch 'main'
-            }
             steps {
                 dir('do-terraform') {
                     withCredentials([string(credentialsId: 'do-api-token', variable: 'DO_TOKEN')]) {
@@ -110,13 +114,8 @@ pipeline {
 
         // =========================
         // Deploy to Droplet
-        // FIX: Copy docker-compose.yml to droplet before running
-        // FIX: Use docker compose v2 (plugin) instead of docker-compose v1
         // =========================
         stage('Deploy to Droplet') {
-            when {
-                branch 'main'
-            }
             steps {
                 script {
                     def dropletIP = sh(
@@ -124,14 +123,14 @@ pipeline {
                         returnStdout: true
                     ).trim()
 
-                    sshagent(['droplet-ssh-key']) {
+                    withCredentials([sshUserPrivateKey(credentialsId: 'droplet-ssh-key', keyFileVariable: 'SSH_KEY')]) {
                         // Copy docker-compose.yml to the droplet
                         sh """
-                            scp -o StrictHostKeyChecking=no docker-compose.yml root@${dropletIP}:/opt/edutrack/docker-compose.yml
+                            scp -o StrictHostKeyChecking=no -i \$SSH_KEY docker-compose.yml root@${dropletIP}:/opt/edutrack/docker-compose.yml
                         """
                         // Pull latest images and deploy
                         sh """
-                            ssh -o StrictHostKeyChecking=no root@${dropletIP} '
+                            ssh -o StrictHostKeyChecking=no -i \$SSH_KEY root@${dropletIP} '
                                 docker pull ${BACKEND_IMAGE}:latest
                                 docker pull ${FRONTEND_IMAGE}:latest
                                 cd /opt/edutrack
