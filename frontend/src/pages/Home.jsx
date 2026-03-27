@@ -4,7 +4,7 @@ const Home = () => {
   return (
     <div className="home-page">
       <h1>Welcome to EduTrack Home!</h1>
-      <p>This is a dummy home page. You have successfully logged in.</p>
+      <p>This is a dummy home page.</p>
     </div>
   );
 };
