@@ -39,7 +39,7 @@ const Home = () => {
         <div className="hero-inner">
           <p className="hero-kicker reveal reveal-1">Learn with clarity</p>
           <h1 className="hero-title reveal reveal-2">
-            Build momentum with
+            updated
             <span className="hero-title-highlight"> EduTrack</span>
           </h1>
           <p className="hero-subtitle reveal reveal-3">
